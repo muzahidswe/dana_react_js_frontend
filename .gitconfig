@@ -1,0 +1,13 @@
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[user]
+	name = khandkerashikmahmud
+	password = asdf27445
+	email = khandker.mahmud@appsissolutions.com
+[credential]
+	helper = store
+[credential "https://gitlab.com"]
+	provider = generic
