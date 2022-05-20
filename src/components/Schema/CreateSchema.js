@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
   import {
     Card,
     Col,
@@ -12,20 +12,20 @@ import React, { useEffect, useState } from "react";
     CardTitle,
     Button
   } from "reactstrap"
-  
-  import classnames from "classnames"
+import classnames from "classnames"
 import { schemaSave } from "../../services/Schema/Schema";
 import { Link } from "react-router-dom"
 import styles from './Schema.module.css';
 import { baseURL } from "../../constants/constants";
 import axios from 'axios';
 import ShowAllSchemaModal from "./ShowAllSchemaModal";
+import { useAlert } from 'react-alert';
   
 
 const DATA_TABLE_URL = baseURL+'scheme/list';
 
 function CreateSchema(props) {
-    
+    const form = useRef(null);
     const [folderOpen , setFolderOpen] = useState(false)
     const [status , setStatus] = useState(false)
     const [accessForLevel , setaccessForLevel] = useState('None Selected')
@@ -42,6 +42,7 @@ function CreateSchema(props) {
     const [modal, setModal] = useState(false);
     const [updatableRow, setUpdatableRow] = useState();
     const [onEye, setOnEye] = useState(false);
+    const alert = useAlert();
 
     const [formData , setFormData] = useState({
         scheme_name:'',
@@ -79,9 +80,17 @@ function CreateSchema(props) {
         setaccessForLevel(e)
     }
 
+    useEffect(()=>{
+       
+    },[formData])
+
     const handleSubmit = (e) =>{
           e.preventDefault();
           schemaSave(formData)
+          alert.success('Schema updated Successfully');
+        //   toggleTab("2")
+            setFormData('')
+            form.current.reset();
     }
     const getSchemaInfo = async (activePage=1) => {
         setIsLoading(true);
@@ -158,7 +167,7 @@ function CreateSchema(props) {
               <Card>
                 <CardBody>
                 <CardTitle className="h4">Create Schema</CardTitle>
-                
+                <form ref={form} onSubmit={handleSubmit}>
                     <div className="mb-3 row">
                         <label
                         htmlFor="example-text-input"
@@ -340,9 +349,16 @@ function CreateSchema(props) {
                             />
                         </div>
                     </div>
+                    <div className="mb-3 row justify-content-center">
+                      <div className="">
+                         <Button className="pt-3 mt-3" style={{width:'200px',margin:'auto'}} type="submit" color="primary"> Save</Button>
+                      </div>
+                    </div>
+
+                   </form>
+
                 </CardBody>
                    
-                   <Button className="pt-3 mt-3"color="primary" onClick={(e) => handleSubmit(e)}> Save</Button>
             </Card>
              
              
@@ -441,247 +457,3 @@ function CreateSchema(props) {
 }
 
 export default CreateSchema;
-
-
-
-
-{/* <div className="mb-3 row">
-<label
-htmlFor="example-search-input"
-className="col-md-2 col-form-label"
->
-Menu Type *
-</label>
-<div className="col-md-3 mt-2">
-    <div className="form-check form-check-right mb-3">
-        <input
-        type="radio"
-        id="customRadio1"
-        name="Root Menu"
-        className="form-check-input"
-        checked={radioButoon == 'Root Menu' ? 'checked' : ''}
-        onClick={() => {
-            setRadioButton('Root Menu')
-        }}
-        />
-        <label
-        className="form-check-label"
-        htmlFor="customRadio1"
-        >
-        Root Menu
-        </label>
-    </div>
-</div>
-<div className="col-md-3  mt-2">
-<div className="form-check form-check-right mb-3">
-        <input
-        type="radio"
-        id="customRadio1"
-        name="Main Menu"
-        className="form-check-input"
-        checked={radioButoon == 'Main Menu' ? 'checked' : ''}
-        onClick={() => {
-            setRadioButton('Main Menu')
-        }}
-        />
-        <label
-        className="form-check-label"
-        htmlFor="customRadio1"
-        >
-        Main Menu
-        </label>
-    </div>
-</div>
-<div className="col-md-3  mt-2">
-<div className="form-check form-check-right mb-3">
-        <input
-        type="radio"
-        id="customRadio1"
-        name="Child Menu"
-        className="form-check-input"
-        checked={radioButoon == 'Child Menu' ? 'checked' : ''}
-        onClick={() => {
-            setRadioButton('Child Menu')
-        }}
-        />
-        <label
-        className="form-check-label"
-        htmlFor="customRadio1"
-        >
-        Child Menu
-        </label>
-    </div>
-</div>
-</div> */}
-
-
-
-
-{/* <div className="mb-3 row">
-                <label
-                htmlFor="example-email-input"
-                className="col-md-2 col-form-label"
-                >
-                Module
-                </label>
-                <div className="col-md-10">
-                    <Input type="select" className="form-select" name='module' id="autoSizingSelect" onChange={(e) => {
-                        handleChange(e)
-                    }}>
-                        <option defaultValue>Choose Menu Module</option>
-                        <option value="one">One</option>
-                        <option value="two">Two</option>
-                        <option value="three">Three</option>
-                    </Input>
-                </div>
-            </div>
-            <div className="mb-3 row">
-                <label
-                htmlFor="example-url-input"
-                className="col-md-2 col-form-label"
-                >
-                Menu Link *
-                </label>
-                <div className="col-md-10">
-                <input
-                    className="form-control"
-                    type="url"
-                    defaultValue="https://getbootstrap.com"
-                    name='menuLink'
-                    onChange={(e) => {
-                        handleChange(e)
-                    }}
-                />
-                </div>
-            </div>
-            <div className="mb-3 row">
-                <label
-                htmlFor="example-tel-input"
-                className="col-md-2 col-form-label"
-                >
-                Parent Menu
-                </label>
-                <div className="col-md-10">
-                <input
-                    className="form-control"
-                    type="tel"
-                    defaultValue=""
-                    name='parentMenu'
-                    onChange={(e) => {
-                        handleChange(e)
-                    }}
-                />
-                </div>
-            </div>
-            <div className="mb-3 row">
-                <label
-                htmlFor="example-password-input"
-                className="col-md-2 col-form-label"
-                >
-                Icon Class *
-                </label>
-                <div className="col-md-10">
-                <input
-                    className="form-control"
-                    type="text"
-                    defaultValue="faCoffee"
-                    name='iconClass'
-                    onChange={(e) => {
-                        handleChange(e)
-                    }}
-                />
-                </div>
-            </div>
-            <div className="mb-3 row">
-                <label
-                htmlFor="example-number-input"
-                className="col-md-2 col-form-label"
-                >
-                Access for Level
-                </label>
-                <div className="col-md-10">
-                    <Dropdown
-                        isOpen={folderOpen}
-                        toggle={()=>toggleFolder()}
-                        className="btn-group me-2 mb-2 mb-sm-0"
-                    >
-                        <DropdownToggle
-                        className="btn btn-primary dropdown-toggle"
-                        tag="i"
-                        >
-                        {accessForLevel}
-                    
-                        <i className="mdi mdi-chevron-down ms-1"/>
-                        </DropdownToggle>
-                        <DropdownMenu>
-                            <DropdownItem  onClick={() => {
-                                handleAccessLevel('Updates')
-                            }}>Updates one</DropdownItem>
-                            <DropdownItem onClick={() => {
-                                handleAccessLevel('Updates')
-                            }}>Social One</DropdownItem>
-                            <DropdownItem onClick={() => {
-                                setaccessForLevel('Updates Two')
-                            }}>Team Manage One</DropdownItem>
-                        </DropdownMenu>
-                    </Dropdown>
-                </div>
-            </div>
-            <div className="mb-3 row">
-                <label
-                htmlFor="example-datetime-local-input"
-                className="col-md-2 col-form-label"
-                >
-                Access for User
-                </label>
-                <div className="col-md-10">
-                <Dropdown
-                        isOpen={folderOpenUser}
-                        toggle={()=>toggleFolderUser()}
-                        className="btn-group me-2 mb-2 mb-sm-0"
-                    >
-                        <DropdownToggle
-                        className="btn btn-primary dropdown-toggle"
-                        tag="i"
-                        >
-                        {accessForUser}
-                        <i className="mdi mdi-chevron-down ms-1"/>
-                        </DropdownToggle>
-                        <DropdownMenu>
-                        <DropdownItem onClick={() => {
-                            setaccessForUser('Updates')
-                        }}>Updates</DropdownItem>
-                        <DropdownItem onClick={() => {
-                            setaccessForUser('Updates')
-                        }}>Social</DropdownItem>
-                        <DropdownItem onClick={() => {
-                            setaccessForUser('Updates')
-                        }}>Team Manage</DropdownItem>
-                        </DropdownMenu>
-                    </Dropdown>
-                </div>
-            </div>
-            <div className="mb-3 row">
-                <label
-                htmlFor="example-date-input"
-                className="col-md-2 col-form-label"
-                >
-                Satus *
-                </label>
-                <div className="col-md-10">
-                <div
-                    className="form-check form-switch form-switch-lg mb-3"
-                    >
-                    <input
-                        type="checkbox"
-                        className="form-check-input"
-                        id="customSwitchsizelg"
-                        defaultChecked
-                        onClick={() => {
-                            setStatus(!status)
-                        }}
-                    />
-                
-                </div>
-                </div>
-            </div> */}
