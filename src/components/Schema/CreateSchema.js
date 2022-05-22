@@ -31,12 +31,8 @@ const DATA_TABLE_URL = baseURL+'scheme/list';
 
 function CreateSchema(props) {
     const form = useRef(null);
+    const alert = useAlert();
     const [folderOpen , setFolderOpen] = useState(false)
-    const [status , setStatus] = useState(false)
-    const [accessForLevel , setaccessForLevel] = useState('None Selected')
-    const [accessForUser , setaccessForUser] = useState('None Selected')
-    const [folderOpenUser , setfolderOpenUser] = useState(false)
-    const [radioButoon , setRadioButton] = useState('Main Menu')
     const [activeTab, toggleTab] = useState("1");
     const [data, setData] = useState([]);
     const [activePage, setActivePage] = useState(1);
@@ -47,7 +43,9 @@ function CreateSchema(props) {
     const [modal, setModal] = useState(false);
     const [updatableRow, setUpdatableRow] = useState();
     const [onEye, setOnEye] = useState(false);
-    const alert = useAlert();
+    const [date, setDate] = useState("");
+    const [errors, setError] = useState({});
+
 
     const [formData , setFormData] = useState({
         scheme_name:'',
@@ -86,11 +84,14 @@ function CreateSchema(props) {
             setFormData({ ...formData, [e.target.name]:parseInt(e.target.value ) })
              checkFieldisvalid(e.target.name , parseInt(e.target.value))
         }
+        console.log('formdataformdata', formData)
     }
-    const handleDateChange = (selectedDates, dateStr, instance) => {
+    const handleDateChange = (selectedDates, dateStr, instance,valueALl) => {
+      // let fromdata = { ...formData };
       const { name, value } = instance.input
-      checkFieldisvalid(name, dateStr);
-      setFormData({ ...formData, [name]: dateStr })
+      checkFieldisvalid(name, value);
+      // setFormData({ ...fromdata, [name]: value })
+      setDate(value)
   }
   
 
@@ -98,6 +99,7 @@ function CreateSchema(props) {
           e.preventDefault();
           const validation = handleVaidation()
           if(!validation){
+            formData.expiry_date = date
             schemaSave(formData)
             alert.success('Schema updated Successfully');
               setFormData('')
@@ -109,7 +111,6 @@ function CreateSchema(props) {
     }
     const getSchemaInfo = async (activePage=1) => {
         setIsLoading(true);
-
         var token = localStorage.getItem("token");
         await axios.get(DATA_TABLE_URL, {"page": activePage,"per_page": perPage}, {headers: {
                     // Accept: "application/json",
@@ -140,7 +141,6 @@ function CreateSchema(props) {
       const handleVaidation = () => {
         // const modifiedV = { ...validation }
         let newError = { ...errors };
-        
         let value = false
         if (formData.scheme_name === "") {
             value=true
@@ -151,76 +151,75 @@ function CreateSchema(props) {
       
           if (formData.rate_of_interest <= 0) {
             value=true
-            newError['rate_of_interest'] =  'rate_of_interest value should be positive';
+            newError['rate_of_interest'] =  'Rate of interest value should be positive';
           } else {
           }
       
           if (formData.loan_tenor_in_days <= 0) {
             value=true
-            newError['loan_tenor_in_days'] =  'loan_tenor_in_days value should be positive';
+            newError['loan_tenor_in_days'] =  'Loan tenor in days value should be positive';
           } else {
           }
       
-          if (formData.expiry_date === "") {
+          if (date === "") {
             value=true
-            newError['expiry_date'] =  'Select scheme_name';
+            newError['expiry_date'] =  'Select expiry_date';
           } else {
           }
       
           if (formData.processing_cost <= 0) {
             value=true
-            newError['processing_cost'] =  'processing_cost value should be positive';
+            newError['processing_cost'] =  'Processing cost value should be positive';
           } else {
           }
           if (formData.transaction_fee <= 0) {
             value=true
-            newError['transaction_fee'] =  'transaction_fee value should be positive';
+            newError['transaction_fee'] =  'Transaction fee value should be positive';
           } else {
           }
           if (formData.collection_fee_sharing_with_agency <= 0) {
             value=true
-            newError['collection_fee_sharing_with_agency'] =  'collection_fee_sharing_with_agency value should be positive';
+            newError['collection_fee_sharing_with_agency'] =  'Collection fee sharing with agency value should be positive';
           } else {
           }
         setError(newError);
           return value
       }
 
-    const [errors, setError] = useState({});
 
 
       const checkFieldisvalid = (name, value) => {
         let newError = { ...errors };
         switch (name) {
             case 'scheme_name':
-                newError[name] = value.trim().length < 3 ? 'Select scheme_name' : '';
+                newError[name] = value.trim().length < 3 ? 'Select Scheme Name' : '';
                 break;
             case 'rate_of_interest':
-                newError[name] = validateNumberPositive.test(parseInt(value)) ? '' : 'rate_of_interest value should be positive';
+                newError[name] = validateNumberPositive.test(parseInt(value)) ? '' : 'Rate of interest value should be positive';
                 break;
             case 'loan_tenor_in_days':
-                newError[name] = validateNumberPositive.test(parseInt(value)) ? '' :'loan_tenor_in_days value should be positive' ;
+                newError[name] = validateNumberPositive.test(parseInt(value)) ? '' :'Loan tenor in_days value should be positive' ;
                 break;
             case 'expiry_date':
-                newError[name] = value.trim().length < 4 ? 'Please Select a expiry_date.' : '';
+                newError[name] = value.trim().length < 4 ? 'Please Select a expiry date.' : '';
                 break;
             case 'grace_periods_in_days':
-                newError[name] =validateNumberPositive.test(parseInt(value)) ? '' : 'grace_periods_in_days value should be positive';
+                newError[name] =validateNumberPositive.test(parseInt(value)) ? '' : 'Grace periods in days value should be positive';
                 break;
             case 'penalty_periods':
-                newError[name] = validateNumberPositive.test(parseInt(value)) ? '' : 'penalty_periods value should be positive';
+                newError[name] = validateNumberPositive.test(parseInt(value)) ? '' : 'Penalty periods value should be positive';
                 break;
             case 'daily_penalty':
-                newError[name] = validateNumberPositive.test(parseInt(value)) ? '' : 'daily_penalty value should be positive';
+                newError[name] = validateNumberPositive.test(parseInt(value)) ? '' : 'Daily penalty value should be positive';
                 break;
             case 'processing_cost':
-                newError[name] = validateNumberPositive.test(parseInt(value)) ? '' : 'processing_cost value should be positive';
+                newError[name] = validateNumberPositive.test(parseInt(value)) ? '' : 'Processing cost value should be positive';
                 break;
             case 'transaction_fee':
-                newError[name] = validateNumberPositive.test(parseInt(value)) ? '' : 'transaction_fee value should be positive';
+                newError[name] = validateNumberPositive.test(parseInt(value)) ? '' : 'Transaction fee value should be positive';
                 break;
             case 'collection_fee_sharing_with_agency':
-                newError[name] = validateNumberPositiveDe.test(parseInt(value)) ? '' : 'collection_fee_sharing_with_agency Charge value should be positive';
+                newError[name] = validateNumberPositiveDe.test(parseInt(value)) ? '' : 'Collection fee_sharing_with_agency Charge value should be positive';
                 break;
             default: break;
         }
@@ -361,26 +360,17 @@ function CreateSchema(props) {
                               options={{
                                   altInput: true,
                                   // altFormat: "F j, Y",
-                                  altFormat: "d/m/Y",
-                                  dateFormat: "d-m-Y",
+                                  altFormat: "Y/m/d",
+                                  dateFormat: "Y-m-d",
                                   minDate: "today"
                               }}
                               name="expiry_date"
                               // defaultDate={Date.now().toString()}
                               value={formData.expiry_date}
-                              onChange={
-                                handleDateChange
+                              onChange={(selectedDates, dateStr, instance)=>
+                                handleDateChange(selectedDates, dateStr, instance)
                             }
                           />
-                            {/* <input
-                                className="form-control"
-                                type="date"
-                                defaultValue="DashBoard"
-                                name = 'expiry_date'
-                                onChange={(e) => {
-                                    handleChange(e)
-                                }}
-                            /> */}
                              {
                              errors?.expiry_date?.length > 0 && <span style={{color:'red'}}>{errors?.expiry_date}</span> 
                             }
@@ -578,7 +568,7 @@ function CreateSchema(props) {
                                                         <td className={styles.valueText}>{data?.scheme_name}</td>
                                                         <td className={styles.valueText}>{data?.rate_of_interest}</td>
                                                         <td className={styles.valueText}>{data?.loan_tenor_in_days}</td>
-                                                        <td className={styles.valueText}>{data?.expiry_date}</td>
+                                                        <td className={styles.valueText}>{data?.expiry_date?.split('T')[0]}</td>
                                                         <td className={styles.valueText}>{data?.grace_periods_in_days}</td>
                                                         <td className={styles.valueText}>{data?.penalty_periods}</td>
                                                         <td className={styles.valueText}>{data?.daily_penalty}</td>

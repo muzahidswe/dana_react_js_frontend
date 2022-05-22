@@ -134,6 +134,7 @@ function RetailerUpload(props) {
     useEffect(() => {
         getRetailerInfo();
     }, []);
+    
     return (       
         <>
         <Card className="m-5">
