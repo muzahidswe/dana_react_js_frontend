@@ -20,7 +20,12 @@ import { baseURL } from "../../constants/constants";
 import axios from 'axios';
 import ShowAllSchemaModal from "./ShowAllSchemaModal";
 import { useAlert } from 'react-alert';
-  
+import "flatpickr/dist/themes/material_blue.css";
+import Flatpickr from "react-flatpickr";
+
+const validateNumberPositive = new RegExp(/^(?:[1-9]\d*|0)?(?:\.\d+)?$/);
+const validateNumberPositiveDe = new RegExp(/^(?:[1-9]\d*|0)?(?:\.\d+)?$/);
+
 
 const DATA_TABLE_URL = baseURL+'scheme/list';
 
@@ -55,42 +60,52 @@ function CreateSchema(props) {
         processing_cost:0,
         transaction_fee:0,
         collection_fee_sharing_with_agency:0,
-
     })
+
+    const [validation, setValidation] = useState({
+        scheme_name:'',
+        rate_of_interest:0,
+        loan_tenor_in_days:0,
+        expiry_date:'',
+        grace_periods_in_days:0,
+        penalty_periods:0,
+        daily_penalty:0,
+        processing_cost:0,
+        transaction_fee:0,
+        collection_fee_sharing_with_agency:0,
+      })
     
-    const toggleFolder = () =>{
-        setFolderOpen(!folderOpen)
-    }
-
-    const toggleFolderUser = () =>{
-        setfolderOpenUser(!folderOpenUser)
-    }
-
     const handleChange =(e)=>{
         if(e.target.name == 'scheme_name'){
            setFormData({ ...formData, [e.target.name]:e.target.value  })
+           checkFieldisvalid(e.target.name , e.target.value)
         }else if(e.target.name == 'expiry_date'){
             setFormData({ ...formData, [e.target.name]:e.target.value  })
+            checkFieldisvalid(e.target.name , e.target.value)
         }else{
             setFormData({ ...formData, [e.target.name]:parseInt(e.target.value ) })
+             checkFieldisvalid(e.target.name , parseInt(e.target.value))
         }
     }
-
-    const handleAccessLevel = (e) =>{
-        setaccessForLevel(e)
-    }
-
-    useEffect(()=>{
-       
-    },[formData])
+    const handleDateChange = (selectedDates, dateStr, instance) => {
+      const { name, value } = instance.input
+      checkFieldisvalid(name, dateStr);
+      setFormData({ ...formData, [name]: dateStr })
+  }
+  
 
     const handleSubmit = (e) =>{
           e.preventDefault();
-          schemaSave(formData)
-          alert.success('Schema updated Successfully');
-        //   toggleTab("2")
-            setFormData('')
-            form.current.reset();
+          const validation = handleVaidation()
+          if(!validation){
+            schemaSave(formData)
+            alert.success('Schema updated Successfully');
+              setFormData('')
+              form.current.reset();
+          }else{
+
+          }
+         
     }
     const getSchemaInfo = async (activePage=1) => {
         setIsLoading(true);
@@ -121,6 +136,98 @@ function CreateSchema(props) {
         setOnEye(true);
         toggle();
       };
+
+      const handleVaidation = () => {
+        // const modifiedV = { ...validation }
+        let newError = { ...errors };
+        
+        let value = false
+        if (formData.scheme_name === "") {
+            value=true
+            newError['scheme_name'] =  'Select scheme_name';
+          } else {
+            value=false
+          }
+      
+          if (formData.rate_of_interest <= 0) {
+            value=true
+            newError['rate_of_interest'] =  'rate_of_interest value should be positive';
+          } else {
+          }
+      
+          if (formData.loan_tenor_in_days <= 0) {
+            value=true
+            newError['loan_tenor_in_days'] =  'loan_tenor_in_days value should be positive';
+          } else {
+          }
+      
+          if (formData.expiry_date === "") {
+            value=true
+            newError['expiry_date'] =  'Select scheme_name';
+          } else {
+          }
+      
+          if (formData.processing_cost <= 0) {
+            value=true
+            newError['processing_cost'] =  'processing_cost value should be positive';
+          } else {
+          }
+          if (formData.transaction_fee <= 0) {
+            value=true
+            newError['transaction_fee'] =  'transaction_fee value should be positive';
+          } else {
+          }
+          if (formData.collection_fee_sharing_with_agency <= 0) {
+            value=true
+            newError['collection_fee_sharing_with_agency'] =  'collection_fee_sharing_with_agency value should be positive';
+          } else {
+          }
+        setError(newError);
+          return value
+      }
+
+    const [errors, setError] = useState({});
+
+
+      const checkFieldisvalid = (name, value) => {
+        let newError = { ...errors };
+        switch (name) {
+            case 'scheme_name':
+                newError[name] = value.trim().length < 3 ? 'Select scheme_name' : '';
+                break;
+            case 'rate_of_interest':
+                newError[name] = validateNumberPositive.test(parseInt(value)) ? '' : 'rate_of_interest value should be positive';
+                break;
+            case 'loan_tenor_in_days':
+                newError[name] = validateNumberPositive.test(parseInt(value)) ? '' :'loan_tenor_in_days value should be positive' ;
+                break;
+            case 'expiry_date':
+                newError[name] = value.trim().length < 4 ? 'Please Select a expiry_date.' : '';
+                break;
+            case 'grace_periods_in_days':
+                newError[name] =validateNumberPositive.test(parseInt(value)) ? '' : 'grace_periods_in_days value should be positive';
+                break;
+            case 'penalty_periods':
+                newError[name] = validateNumberPositive.test(parseInt(value)) ? '' : 'penalty_periods value should be positive';
+                break;
+            case 'daily_penalty':
+                newError[name] = validateNumberPositive.test(parseInt(value)) ? '' : 'daily_penalty value should be positive';
+                break;
+            case 'processing_cost':
+                newError[name] = validateNumberPositive.test(parseInt(value)) ? '' : 'processing_cost value should be positive';
+                break;
+            case 'transaction_fee':
+                newError[name] = validateNumberPositive.test(parseInt(value)) ? '' : 'transaction_fee value should be positive';
+                break;
+            case 'collection_fee_sharing_with_agency':
+                newError[name] = validateNumberPositiveDe.test(parseInt(value)) ? '' : 'collection_fee_sharing_with_agency Charge value should be positive';
+                break;
+            default: break;
+        }
+        setError(newError);
+    }
+
+
   return (
     <React.Fragment>
    <Container fluid>
@@ -181,11 +288,15 @@ function CreateSchema(props) {
                                 type="text"
                                 defaultValue={formData.scheme_name}
                                 name = 'scheme_name'
-                                placeholder="Enter Scheme Name"
+                                placeholder="Enter Scheme Nme"
                                 onChange={(e) => {
                                     handleChange(e)
                                 }}
                             />
+                            {
+                             errors?.scheme_name?.length > 0 && <span style={{color:'red'}}>Please Enter Valid Schema Name</span> 
+                            }
+                            
                         </div>
                     </div>
 
@@ -206,6 +317,9 @@ function CreateSchema(props) {
                                     handleChange(e)
                                 }}
                             />
+                            {
+                             errors?.rate_of_interest?.length > 0 && <span style={{color:'red'}}>{errors?.rate_of_interest}</span> 
+                            }
                         </div>
                     </div>
                 
@@ -227,6 +341,9 @@ function CreateSchema(props) {
                                     handleChange(e)
                                 }}
                             />
+                            {
+                             errors?.loan_tenor_in_days?.length > 0 && <span style={{color:'red'}}>{errors?.loan_tenor_in_days}</span> 
+                            }
                         </div>
                     </div>
 
@@ -238,7 +355,24 @@ function CreateSchema(props) {
                         Expiry Date
                         </label>
                         <div className="col-md-10">
-                            <input
+                           <Flatpickr
+                              className="form-control d-block"
+                              placeholder="Day Month,Year"
+                              options={{
+                                  altInput: true,
+                                  // altFormat: "F j, Y",
+                                  altFormat: "d/m/Y",
+                                  dateFormat: "d-m-Y",
+                                  minDate: "today"
+                              }}
+                              name="expiry_date"
+                              // defaultDate={Date.now().toString()}
+                              value={formData.expiry_date}
+                              onChange={
+                                handleDateChange
+                            }
+                          />
+                            {/* <input
                                 className="form-control"
                                 type="date"
                                 defaultValue="DashBoard"
@@ -246,7 +380,10 @@ function CreateSchema(props) {
                                 onChange={(e) => {
                                     handleChange(e)
                                 }}
-                            />
+                            /> */}
+                             {
+                             errors?.expiry_date?.length > 0 && <span style={{color:'red'}}>{errors?.expiry_date}</span> 
+                            }
                         </div>
                     </div>
 
@@ -267,6 +404,9 @@ function CreateSchema(props) {
                                     handleChange(e)
                                 }}
                             />
+                             {
+                             errors?.grace_periods_in_days?.length > 0 && <span style={{color:'red'}}>{errors?.grace_periods_in_days}</span> 
+                            }
                         </div>
                     </div>
 
@@ -287,6 +427,9 @@ function CreateSchema(props) {
                                     handleChange(e)
                                 }}
                             />
+                             {
+                             errors?.penalty_periods?.length > 0 && <span style={{color:'red'}}>{errors?.penalty_periods}</span> 
+                            }
                         </div>
                     </div>
 
@@ -307,6 +450,9 @@ function CreateSchema(props) {
                                     handleChange(e)
                                 }}
                             />
+                             {
+                             errors?.daily_penalty?.length > 0 && <span style={{color:'red'}}>{errors?.daily_penalty}</span> 
+                            }
                         </div>
                     </div>
 
@@ -327,6 +473,32 @@ function CreateSchema(props) {
                                     handleChange(e)
                                 }}
                             />
+                             {
+                             errors?.processing_cost?.length > 0 && <span style={{color:'red'}}>{errors?.processing_cost}</span> 
+                            }
+                        </div>
+                    </div>
+
+                    <div className="mb-3 row">
+                        <label
+                        htmlFor="example-text-input"
+                        className="col-md-2 col-form-label"
+                        >
+                       Transaction Fee
+                        </label>
+                        <div className="col-md-10">
+                            <input
+                                className="form-control"
+                                type="number"
+                                defaultValue="DashBoard"
+                                name = 'transaction_fee'
+                                onChange={(e) => {
+                                    handleChange(e)
+                                }}
+                            />
+                             {
+                             errors?.transaction_fee?.length > 0 && <span style={{color:'red'}}>{errors?.transaction_fee}</span> 
+                            }
                         </div>
                     </div>
 
@@ -347,6 +519,9 @@ function CreateSchema(props) {
                                     handleChange(e)
                                 }}
                             />
+                             {
+                             errors?.collection_fee_sharing_with_agency?.length > 0 && <span style={{color:'red'}}>{errors?.collection_fee_sharing_with_agency}</span> 
+                            }
                         </div>
                     </div>
                     <div className="mb-3 row justify-content-center">
