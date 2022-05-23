@@ -190,6 +190,8 @@ function CreateSchema(props) {
       }
 
       const handleShemaSave = (row) => {
+        setglobalSchemaAllVAlue([])
+        setGlobalSchemaDisable(false)
         setUpdatableRow(row);
         setsaveGlobalSchema(true);
         toggle();
