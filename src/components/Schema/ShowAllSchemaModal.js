@@ -107,7 +107,7 @@ function ShowAllSchemaModal(props) {
         <FormInput
             name="registered_office_bangladesh"
             type="text"
-            label="collection_fee_sharing_with_agency"
+            label="Collection Fee Sharing With Agency"
             inputDefaultValue={props?.defaultValue?.collection_fee_sharing_with_agency}
             disabled='true'
         />

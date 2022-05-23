@@ -13,7 +13,7 @@ import React, { useEffect, useRef, useState } from "react";
     Button
   } from "reactstrap"
 import classnames from "classnames"
-import { schemaSave } from "../../services/Schema/Schema";
+import { getGlobalSchema, schemaSave } from "../../services/Schema/Schema";
 import { Link } from "react-router-dom"
 import styles from './Schema.module.css';
 import { baseURL } from "../../constants/constants";
@@ -22,6 +22,7 @@ import ShowAllSchemaModal from "./ShowAllSchemaModal";
 import { useAlert } from 'react-alert';
 import "flatpickr/dist/themes/material_blue.css";
 import Flatpickr from "react-flatpickr";
+import SaveGlovalSchema from "./SaveGlovalSchema";
 
 const validateNumberPositive = new RegExp(/^(?:[1-9]\d*|0)?(?:\.\d+)?$/);
 const validateNumberPositiveDe = new RegExp(/^(?:[1-9]\d*|0)?(?:\.\d+)?$/);
@@ -43,9 +44,11 @@ function CreateSchema(props) {
     const [modal, setModal] = useState(false);
     const [updatableRow, setUpdatableRow] = useState();
     const [onEye, setOnEye] = useState(false);
+    const [saveGlobalSchema, setsaveGlobalSchema] = useState(false);
     const [date, setDate] = useState("");
     const [errors, setError] = useState({});
-
+    const [globalSchemaDisable , setGlobalSchemaDisable] = useState(false);
+    const [globalSchemaAllVAlue , setglobalSchemaAllVAlue] = useState([]);
 
     const [formData , setFormData] = useState({
         scheme_name:'',
@@ -186,7 +189,11 @@ function CreateSchema(props) {
           return value
       }
 
-
+      const handleShemaSave = (row) => {
+        setUpdatableRow(row);
+        setsaveGlobalSchema(true);
+        toggle();
+      };
 
       const checkFieldisvalid = (name, value) => {
         let newError = { ...errors };
@@ -225,6 +232,30 @@ function CreateSchema(props) {
         }
         setError(newError);
     }
+
+    const handleShemaShow =async (row) => {
+      let value =await getGlobalSchema(row)
+      if(value.data.success == true){
+        if(value.data.data.length == 0){
+          alert.error('No Data Save For This Schema. Please Save global schema for this schema')
+        }else{
+          setUpdatableRow(row);
+          setglobalSchemaAllVAlue(value.data.data)
+          setsaveGlobalSchema(true);
+          setGlobalSchemaDisable(true)
+          toggle();
+        }
+       
+        
+      }else{
+        alert.erroe('Network Error')
+      }
+      console.log(value)
+     
+      
+    }
+
+
 
 
   return (
@@ -549,14 +580,14 @@ function CreateSchema(props) {
                                                 <th>Loan Tenor In Days</th>
                                                 <th>Expiry Date</th>
                                                 <th>Grace Periods In Days</th>
+                                                <th>Rate of Interest</th>
                                                 <th>Penalty Periods</th>
                                                 <th>Daily Penalty</th>
                                                 <th>Processing Cost</th>
                                                 <th>Transaction Fee</th>
                                                 <th>Collection Fee Sharing With Agency</th>
-
-
                                                 <th>Action</th>
+                                                <th>Schema Parameter Action</th>
                                             </tr>
                                         </thead>
 
@@ -566,10 +597,10 @@ function CreateSchema(props) {
                                                     <tr key={index}>
                                                         <td className={styles.valueText}>{index+1 + (activePage-1) *10}.</td>
                                                         <td className={styles.valueText}>{data?.scheme_name}</td>
-                                                        <td className={styles.valueText}>{data?.rate_of_interest}</td>
                                                         <td className={styles.valueText}>{data?.loan_tenor_in_days}</td>
                                                         <td className={styles.valueText}>{data?.expiry_date?.split('T')[0]}</td>
                                                         <td className={styles.valueText}>{data?.grace_periods_in_days}</td>
+                                                        <td className={styles.valueText}>{data?.rate_of_interest}</td>
                                                         <td className={styles.valueText}>{data?.penalty_periods}</td>
                                                         <td className={styles.valueText}>{data?.daily_penalty}</td>
                                                         <td className={styles.valueText}>{data?.processing_cost}</td>
@@ -584,6 +615,26 @@ function CreateSchema(props) {
                                                                 data-placement="bottom"
                                                                 title="Delete"
                                                                 onClick={() => handleShowEye(data)}
+                                                            >
+                                                                <i className="la la-eye text-dinfoanger"></i>
+                                                            </Link>
+                                                        </td>
+                                                        <td className={styles.valueText}> 
+                                                        <Link
+                                                                className="btn btn-sm btn-clean btn-icon"
+                                                                data-toggle="tooltip"
+                                                                data-placement="bottom"
+                                                                title="Delete"
+                                                                onClick={() => handleShemaSave(data)}
+                                                            >
+                                                                <i className="la la-plus text-dinfoanger"></i>
+                                                            </Link>
+                                                            <Link
+                                                                className="btn btn-sm btn-clean btn-icon"
+                                                                data-toggle="tooltip"
+                                                                data-placement="bottom"
+                                                                title="Delete"
+                                                                onClick={() => handleShemaShow(data)}
                                                             >
                                                                 <i className="la la-eye text-dinfoanger"></i>
                                                             </Link>
@@ -613,6 +664,18 @@ function CreateSchema(props) {
         toggle={toggle}
         modal={modal}
         defaultValue={updatableRow}
+        />
+    )}
+
+   {saveGlobalSchema && (
+        <SaveGlovalSchema
+        modalTitle="Save Global Schema"
+        btnName="Save Global Schema"
+        toggle={toggle}
+        modal={modal}
+        defaultValue={updatableRow}
+        globalSchemaDisable = {globalSchemaDisable}
+        globalSchemaAllVAlue={globalSchemaAllVAlue}
         />
     )}
     </Container>
