@@ -17,6 +17,10 @@ import UpdateManuFactureModal from "./UpdateManuFactureModal";
 import ManufactureDeleteModal from "./ManufactureDeleteModal";
 import { manufactureDelete, manufactureUpdate } from "../../../services/Manufacture/Manufacture";
 import ShowAllManufactureModal from "./ShowAllManufactureModal";
+import { ExportReactCSV } from "../../../services/ExportToCSV/ExportToCsv";
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
+
 
 const DATA_TABLE_URL = baseURL+'manufacturer/manufacturers';
 const DATA_TABLE_DOWNLOAD_URL = baseURL+'scope-outlets-download';
@@ -24,7 +28,6 @@ const DELETE_URL = baseURL+'delete-scope-outlet';
 
 function ManufactureInfoUpload(props) {
     const alert = useAlert();
-    const toast = useAlert();
 
     const initialValues = {
         file: ""
@@ -139,7 +142,7 @@ function ManufactureInfoUpload(props) {
         setIsLoading(true);
 
         var token = localStorage.getItem("token");
-        await axios.get(DATA_TABLE_URL, {"page": activePage,"per_page": perPage}, {headers: {
+        await axios.get(DATA_TABLE_URL, {params:  {"page": activePage,"per_page": perPage}  }, {headers: {
                     // Accept: "application/json",
                     // "Content-Type": "application/json",
                     Authorization: "Bearer " + token,
@@ -192,7 +195,7 @@ function ManufactureInfoUpload(props) {
          
           const status = await manufactureUpdate(updatableRow);
           if(status){
-          toast.success('Manufacturer updated Successfully');
+          alert.success('Manufacturer updated Successfully');
             toggle();
           }
         } catch (error) {
@@ -220,7 +223,7 @@ function ManufactureInfoUpload(props) {
             data.splice(index,1)  // first positon , second delete and thrid number
             setData(data)
             manufactureDelete(updatableRow)
-          toast.success('Manufacturer Delete Successfully');
+          alert.success('Manufacturer Delete Successfully');
             setOnDelete(false);
             toggle();
         }
@@ -243,7 +246,9 @@ function ManufactureInfoUpload(props) {
         setOnEye(true);
         toggle();
       };
-
+      const notify = () =>{
+        toast("Only Download This Page Information");
+      } 
 
     return (      
         <>
@@ -279,13 +284,12 @@ function ManufactureInfoUpload(props) {
                                     <span>Upload</span>
                                     {/* {loading && <span className="ml-3 spinner spinner-white"></span>} */}
                                 </button>
-                                <a href={sampleDownload} className="pl-2">
-                                <button
-                                    type="submit"
-                                    className="btn btn-primary btn-sm"
-                                >
-                                    <span>Download</span>
-                                </button>
+                                <a  className="pl-2" >
+                                {
+                                    data.length > 0 && 
+                                    <span onClick={notify}><ExportReactCSV csvData={data} fileName="ManufactureData" /></span>
+                                }
+                                <ToastContainer />
                                 </a>                
                             </div>
                             <div className="col-2">

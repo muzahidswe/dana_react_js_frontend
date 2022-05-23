@@ -17,6 +17,9 @@ import UpdateSalesAgentModal from "./UpdateSalesAgentModal";
 import SalesAgentDeleteModal from "./SalesAgentDeleteModal";
 import { salesagentDelete, salesagentUpdate } from "../../../services/SalesAgent/SalesAgent";
 import ShowSalesAgentModal from "./ShowSalesAgentModal";
+import { ExportReactCSV } from "../../../services/ExportToCSV/ExportToCsv";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const DATA_TABLE_URL = baseURL+'salesagent/salesagents';
 const DATA_TABLE_DOWNLOAD_URL = baseURL+'scope-outlets-download';
@@ -24,7 +27,6 @@ const DELETE_URL = baseURL+'delete-scope-outlet';
 
 function SalesAgentUpload(props) {
     const alert = useAlert();
-    const toast = useAlert();
 
     const initialValues = {
         file: ""
@@ -132,7 +134,7 @@ function SalesAgentUpload(props) {
         setIsLoading(true);
 
         var token = localStorage.getItem("token");
-        await axios.get(DATA_TABLE_URL, {"page": activePage,"per_page": perPage}, {headers: {
+        await axios.get(DATA_TABLE_URL, {params:  {"page": activePage,"per_page": perPage}  }, {headers: {
                     // Accept: "application/json",
                     // "Content-Type": "application/json",
                     Authorization: "Bearer " + token,
@@ -195,7 +197,7 @@ function SalesAgentUpload(props) {
          
           const status = await salesagentUpdate(updatableRow);
           if(status){
-            toast.success('SalesAgent updated Successfully');
+            alert.success('SalesAgent updated Successfully');
             toggle();
           }
         } catch (error) {
@@ -217,7 +219,7 @@ function SalesAgentUpload(props) {
             data.splice(index,1)  // first positon , second delete and thrid number
             setData(data)
             salesagentDelete(updatableRow)
-            toast.success('SalesAGent Deleted Successfully');
+            alert.success('SalesAGent Deleted Successfully');
             setOnDelete(false);
             toggle();
         } catch (error) {
@@ -240,22 +242,12 @@ function SalesAgentUpload(props) {
         setOnEye(true);
         toggle();
       };
-
+      const notify = () =>{
+        toast("Only Download This Page Information");
+      }
 
     return (
         <>
-        {/* <div className="row pt-3">
-               <div className="offset-10 col-2">
-                   <a href={sampleDownload}>
-                       <button
-                           type="button"
-                           className="btn btn-primary btn-sm"
-                       >
-                           <span>Download Sample</span>
-                       </button>
-                   </a>
-               </div>
-           </div>             */}
         <Card className="m-5">
             <Card.Body>
                 {/* {(userType == 'fi') &&                  */}
@@ -289,13 +281,14 @@ function SalesAgentUpload(props) {
                                     <span>Upload</span>
                                     {/* {loading && <span className="ml-3 spinner spinner-white"></span>} */}
                                 </button>
-                                <a href={sampleDownload} className="pl-2">
-                                <button
-                                    type="submit"
-                                    className="btn btn-primary btn-sm"
-                                >
-                                    <span>Download</span>
-                                </button>
+                                <a  className="pl-2">
+                                    <span>
+                                         {
+                                            data.length > 0 && 
+                                            <span onClick={notify}><ExportReactCSV csvData={data} fileName="SalesAgentData" /></span>
+                                         }
+                                         <ToastContainer />
+                                    </span>
                                 </a>
                             </div>
                             <div className="col-2">

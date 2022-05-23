@@ -18,6 +18,10 @@ import SupervisorDeleteModal from "./SupervisorDeleteModal";
 import SupervisorUpdateModal from "./SupervisorDIstributoreModal";
 import { supervisorDelete, supervisorUpdate } from "../../../services/Supervisor/Supervisor";
 import ShowAllSupervisorModal from "./ShowAllSupervisorModal";
+import { ExportReactCSV } from "../../../services/ExportToCSV/ExportToCsv";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import qs from 'qs';
 
 const DATA_TABLE_URL = baseURL+'supervisor/supervisors';
 const DATA_TABLE_DOWNLOAD_URL = baseURL+'scope-outlets-download';
@@ -29,7 +33,6 @@ function SupervisorInfoUpload(props) {
     const initialValues = {
         file: ""
     };
-    const toast = useAlert();
 
     const [loading, setLoading] = useState(false);
     const [lastPage, setlastPage] = useState(0);
@@ -131,14 +134,20 @@ function SupervisorInfoUpload(props) {
 
     const getSalesAgentInfo = async (activePage=1) => {
         setIsLoading(true);
-
         var token = localStorage.getItem("token");
-        await axios.get(DATA_TABLE_URL, {"page": activePage,"per_page": perPage}, {headers: {
-                    // Accept: "application/json",
-                    // "Content-Type": "application/json",
+        await axios.get(DATA_TABLE_URL, {params:  {"page": activePage,"per_page": perPage}  }, {headers: {
                     Authorization: "Bearer " + token,
+                    "Content-Type": "application/json",
                 }})
+        // debugger
+        // const response = await axios({
+        //     method: "get",
+        //     headers: { Authorization: "Bearer " + token },
+        //     data:{"page": activePage,"per_page": perPage},
+        //     url: DATA_TABLE_URL,
+        // })
         .then(res => {
+            debugger
             console.log(res?.data?.data)
             setData(res?.data?.data.data);
             setlastPage(res?.data?.data?.pagination?.lastPage)
@@ -195,7 +204,7 @@ function SupervisorInfoUpload(props) {
          
           const status = await supervisorUpdate(updatableRow);
           if(status){
-            toast.success('Supervisor updated Successfully');
+            alert.success('Supervisor updated Successfully');
             toggle();
           }
         } catch (error) {
@@ -217,7 +226,7 @@ function SupervisorInfoUpload(props) {
             data.splice(index,1)  // first positon , second delete and thrid number
             setData(data)
             supervisorDelete(updatableRow)
-            toast.success('Supervisor Deleted Successfully');
+            alert.success('Supervisor Deleted Successfully');
             setOnDelete(false);
             toggle();
         } catch (error) {
@@ -240,6 +249,10 @@ function SupervisorInfoUpload(props) {
         setOnEye(true);
         toggle();
       };
+
+      const notify = () =>{
+        toast("Only Download This Page Information");
+      }
 
     return (      
         <>
@@ -275,13 +288,14 @@ function SupervisorInfoUpload(props) {
                                     <span>Upload </span>
                                     {/* {loading && <span className="ml-3 spinner spinner-white"></span>} */}
                                 </button>
-                                <a href={sampleDownload} className="pl-2">
-                                <button
-                                    type="submit"
-                                    className="btn btn-primary btn-sm"
-                                >
-                                    <span>Download</span>
-                                </button>
+                                <a  className="pl-2">
+                                    <span> 
+                                        {
+                                            data.length > 0 && 
+                                            <span onClick={notify}><ExportReactCSV csvData={data} fileName="SupervisorData" /></span>
+                                        }
+                                <ToastContainer />
+                                 </span>
                                 </a>                
                             </div>
                             <div className="col-2">

@@ -17,6 +17,9 @@ import UpdatDIstributoreModal from "./UpdatDIstributoreModal";
 import DistributoreDeleteModal from "./DistributoreDeleteModal";
 import { distributorDelete, distributorUpdate } from "../../../services/Distributor/Distributor";
 import ShowAllDistributorModal from "./ShowAllDistributorModal";
+import { ExportReactCSV } from "../../../services/ExportToCSV/ExportToCsv";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const DATA_TABLE_URL = baseURL+'distributor/distributors';
 const DATA_TABLE_DOWNLOAD_URL = baseURL+'scope-outlets-download';
@@ -28,7 +31,6 @@ function InfoUpload(props) {
     const initialValues = {
         file: ""
     };
-    const toast = useAlert();
 
     const [loading, setLoading] = useState(false);
     const [lastPage, setlastPage] = useState(0);
@@ -132,7 +134,7 @@ function InfoUpload(props) {
         setIsLoading(true);
 
         var token = localStorage.getItem("token");
-        await axios.get(DATA_TABLE_URL, {"page": activePage,"per_page": perPage}, {headers: {
+        await axios.get(DATA_TABLE_URL, {params:  {"page": activePage,"per_page": perPage}  }, {headers: {
                     // Accept: "application/json",
                     // "Content-Type": "application/json",
                     Authorization: "Bearer " + token,
@@ -194,7 +196,7 @@ function InfoUpload(props) {
          
           const status = await distributorUpdate(updatableRow);
           if(status){
-            toast.success('Distributor updated Successfully');
+            alert.success('Distributor updated Successfully');
             toggle();
           }
         } catch (error) {
@@ -206,7 +208,6 @@ function InfoUpload(props) {
     setUpdatableRow((prevState) => {
         return { ...prevState, [name]: value };
     });
-    console.log(updatableRow)
     };
 
     const deleteRow = async () => {
@@ -215,7 +216,7 @@ function InfoUpload(props) {
             data.splice(index,1)  // first positon , second delete and thrid number
             setData(data)
             distributorDelete(updatableRow)
-            toast.success('Distributor Delete Successfully');
+            alert.success('Distributor Delete Successfully');
             setOnDelete(false);
             toggle();
         } catch (error) {
@@ -239,7 +240,9 @@ function InfoUpload(props) {
         toggle();
         
       };
-
+      const notify = () =>{
+        toast("Only Download This Page Information");
+      }
     return (      
         <>
         <Card className="m-5">
@@ -275,13 +278,12 @@ function InfoUpload(props) {
                                     <span>Upload</span>
                                     {/* {loading && <span className="ml-3 spinner spinner-white"></span>} */}
                                 </button>
-                                <a href={sampleDownload} className="pl-2">
-                                <button
-                                    type="submit"
-                                    className="btn btn-primary btn-sm"
-                                >
-                                    <span>Download</span>
-                                </button>
+                                <a  className="pl-2">
+                                {
+                                    data.length > 0 && 
+                                    <span onClick={notify}><ExportReactCSV csvData={data} fileName="DistributorData" /></span>
+                                 }
+                                <ToastContainer />
                                 </a>                
                             </div>
                             <div className="col-2">

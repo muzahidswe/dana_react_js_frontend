@@ -11,6 +11,7 @@ import Loader from "react-loader-spinner";
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from './RetailerUpload.module.css';
+import { ExportReactCSV } from "../../../services/ExportToCSV/ExportToCsv";
 // import ReactPaginate from 'react-paginate';
 
 const DATA_TABLE_URL = baseURL+'retailer/retailers';
@@ -169,13 +170,11 @@ function RetailerUpload(props) {
                                     <span>Upload</span>
                                     {/* {loading && <span className="ml-3 spinner spinner-white"></span>} */}
                                 </button>
-                                <a href={sampleDownload} className="pl-2">
-                                <button
-                                    type="submit"
-                                    className="btn btn-primary btn-sm"
-                                >
-                                    <span>Download</span>
-                                </button>
+                                <a  className="pl-2">
+                               {
+                                    data.length > 0 && 
+                                    <span><ExportReactCSV csvData={data} fileName="RetailerData" /></span>
+                               }
                                 </a> 
                             </div>
                             <div className="col-2">

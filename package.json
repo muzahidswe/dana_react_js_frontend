@@ -40,7 +40,7 @@
     "react-bootstrap-multiselect": "^2.4.1",
     "react-circular-progressbar": "^2.0.4",
     "react-confirm-alert": "^2.7.0",
-    "react-csv": "^2.0.3",
+    "react-csv": "^2.2.2",
     "react-customizable-progressbar": "^1.0.3",
     "react-data-export": "^0.6.0",
     "react-data-table-component": "^6.11.6",
