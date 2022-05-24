@@ -66,6 +66,7 @@ function CreateSchema(props) {
     const [perPageRetailer, setPerPageRetailer] = useState(10);
     const [dataRetailer, setDataRetailer] = useState([]);
     const [checkRetailerrData, setCheckRetailerData] = useState([]);
+    const [DisableOption, setDisableOption] = useState([]);
     
 
     const [formData , setFormData] = useState({
@@ -171,13 +172,13 @@ function CreateSchema(props) {
             value=false
           }
       
-          if (formData.rate_of_interest <= 0) {
+          if (formData.rate_of_interest < 0) {
             value=true
             newError['rate_of_interest'] =  'Rate of interest value should be positive';
           } else {
           }
       
-          if (formData.loan_tenor_in_days <= 0) {
+          if (formData.loan_tenor_in_days < 0) {
             value=true
             newError['loan_tenor_in_days'] =  'Loan tenor in days value should be positive';
           } else {
@@ -189,17 +190,17 @@ function CreateSchema(props) {
           } else {
           }
       
-          if (formData.processing_cost <= 0) {
+          if (formData.processing_cost < 0) {
             value=true
             newError['processing_cost'] =  'Processing cost value should be positive';
           } else {
           }
-          if (formData.transaction_fee <= 0) {
+          if (formData.transaction_fee < 0) {
             value=true
             newError['transaction_fee'] =  'Transaction fee value should be positive';
           } else {
           }
-          if (formData.collection_fee_sharing_with_agency <= 0) {
+          if (formData.collection_fee_sharing_with_agency < 0) {
             value=true
             newError['collection_fee_sharing_with_agency'] =  'Collection fee sharing with agency value should be positive';
           } else {
@@ -543,7 +544,7 @@ const handleSaveMultiScheme =async (schemeId) =>{
                                                     }
                                         </Input>
                                         :
-                                         'Select Schema'
+                                        'Select Schema'
                                       }
                                       
                                     </th>
@@ -650,7 +651,7 @@ const handleSaveMultiScheme =async (schemeId) =>{
                             <input
                                 className="form-control"
                                 type="text"
-                                defaultValue={formData.scheme_name}
+                                defaultValue={formData.scheme_name ?? 0}
                                 name = 'scheme_name'
                                 placeholder="Enter Scheme Nme"
                                 onChange={(e) => {
@@ -675,7 +676,7 @@ const handleSaveMultiScheme =async (schemeId) =>{
                             <input
                                 className="form-control"
                                 type="number"
-                                defaultValue="DashBoard"
+                                defaultValue={formData.rate_of_interest ?? 0}
                                 name = 'rate_of_interest'
                                 onChange={(e) => {
                                     handleChange(e)
@@ -699,7 +700,7 @@ const handleSaveMultiScheme =async (schemeId) =>{
                             <input
                                 className="form-control"
                                 type="number"
-                                defaultValue="DashBoard"
+                                defaultValue={formData.loan_tenor_in_days ?? 0}
                                 name = 'loan_tenor_in_days'
                                 onChange={(e) => {
                                     handleChange(e)
@@ -753,7 +754,7 @@ const handleSaveMultiScheme =async (schemeId) =>{
                             <input
                                 className="form-control"
                                 type="number"
-                                defaultValue="DashBoard"
+                                defaultValue={formData.grace_periods_in_days ?? 0}
                                 name = 'grace_periods_in_days'
                                 onChange={(e) => {
                                     handleChange(e)
@@ -776,7 +777,7 @@ const handleSaveMultiScheme =async (schemeId) =>{
                             <input
                                 className="form-control"
                                 type="number"
-                                defaultValue="DashBoard"
+                                defaultValue={formData.penalty_periods ?? 0}
                                 name = 'penalty_periods'
                                 onChange={(e) => {
                                     handleChange(e)
@@ -799,7 +800,7 @@ const handleSaveMultiScheme =async (schemeId) =>{
                             <input
                                 className="form-control"
                                 type="number"
-                                defaultValue="DashBoard"
+                                defaultValue={formData.daily_penalty ?? 0}
                                 name = 'daily_penalty'
                                 onChange={(e) => {
                                     handleChange(e)
@@ -822,7 +823,7 @@ const handleSaveMultiScheme =async (schemeId) =>{
                             <input
                                 className="form-control"
                                 type="number"
-                                defaultValue="DashBoard"
+                                defaultValue={formData.processing_cost ?? 0}
                                 name = 'processing_cost'
                                 onChange={(e) => {
                                     handleChange(e)
@@ -845,7 +846,7 @@ const handleSaveMultiScheme =async (schemeId) =>{
                             <input
                                 className="form-control"
                                 type="number"
-                                defaultValue="DashBoard"
+                                defaultValue={formData.transaction_fee ?? 0}
                                 name = 'transaction_fee'
                                 onChange={(e) => {
                                     handleChange(e)
@@ -868,7 +869,7 @@ const handleSaveMultiScheme =async (schemeId) =>{
                             <input
                                 className="form-control"
                                 type="number"
-                                defaultValue="DashBoard"
+                                defaultValue={formData.collection_fee_sharing_with_agency ?? 0}
                                 name = 'collection_fee_sharing_with_agency'
                                 onChange={(e) => {
                                     handleChange(e)

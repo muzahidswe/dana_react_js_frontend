@@ -136,55 +136,55 @@ const handleVaidation = () => {
         value=false
       }
   
-      if (formData.rate_ofintrvl_check_uninterrupt_sales_interest <= 0) {
+      if (formData.rate_ofintrvl_check_uninterrupt_sales_interest < 0) {
         value=true
         newError['intrvl_check_uninterrupt_sales'] =  'intrvl_check_uninterrupt_sales value should be positive';
       } else {
       }
   
-      if (formData.max_credit_limit_all <= 0) {
+      if (formData.max_credit_limit_all < 0) {
         value=true
         newError['max_credit_limit_all'] =  'max_credit_limit_all value should be positive';
       } else {
       }
   
   
-      if (formData.max_credit_limit_by_manufacturer <= 0) {
+      if (formData.max_credit_limit_by_manufacturer < 0) {
         value=true
         newError['max_credit_limit_by_manufacturer'] =  'max_credit_limit_by_manufacturer value should be positive';
       } else {
       }
-      if (formData.min_avg_sales_manufacturer <= 0) {
+      if (formData.min_avg_sales_manufacturer < 0) {
         value=true
         newError['min_avg_sales_manufacturer'] =  'min_avg_sales_manufacturer value should be positive';
       } else {
       }
-      if (formData.avg_sales_duration <= 0) {
+      if (formData.avg_sales_duration < 0) {
         value=true
         newError['avg_sales_duration'] =  'avg_sales_duration sharing with agency value should be positive';
       } else {
       }
-      if (formData.interval_checking_avg_sales_duration <= 0) {
+      if (formData.interval_checking_avg_sales_duration < 0) {
         value=true
         newError['interval_checking_avg_sales_duration'] =  'interval_checking_avg_sales_duration sharing with agency value should be positive';
       } else {
       }
-      if (formData.max_limit_no_trade_license <= 0) {
+      if (formData.max_limit_no_trade_license < 0) {
         value=true
         newError['max_limit_no_trade_license'] =  'max_limit_no_trade_license sharing with agency value should be positive';
       } else {
       }
-      if (formData.max_limit_no_security_cheque <= 0) {
+      if (formData.max_limit_no_security_cheque < 0) {
         value=true
         newError['max_limit_no_security_cheque'] =  'max_limit_no_security_cheque sharing with agency value should be positive';
       } else {
       }
-      if (formData.multiplying_factor <= 0) {
+      if (formData.multiplying_factor < 0) {
         value=true
         newError['multiplying_factor'] =  'multiplying_factor sharing with agency value should be positive';
       } else {
       }
-      if (formData.interest_capitalisaion_period <= 0) {
+      if (formData.interest_capitalisaion_period < 0) {
         value=true
         newError['interest_capitalisaion_period'] =  'interest_capitalisaion_period sharing with agency value should be positive';
       } else {
