@@ -14,7 +14,7 @@ import React, { useEffect, useRef, useState } from "react";
     Input
   } from "reactstrap"
 import classnames from "classnames"
-import { getDIstributorWIthManuID, getGlobalSchema, getRetailerrWIthDistID, schemaSave } from "../../services/Schema/Schema";
+import { getDIstributorWIthManuID, getGlobalSchema, getRetailerrWIthDistID, saveRetailerSchema, schemaSave } from "../../services/Schema/Schema";
 import { Link } from "react-router-dom"
 import styles from './Schema.module.css';
 import { baseURL } from "../../constants/constants";
@@ -39,7 +39,7 @@ function CreateSchema(props) {
     const alert = useAlert();
     const [folderOpen , setFolderOpen] = useState(false)
     const [activeTab, toggleTab] = useState("0");
-    const [data, setData] = useState([]);
+    const [dataScheme, setData] = useState([]);
     const [activePage, setActivePage] = useState(1);
     const [lastPage, setlastPage] = useState(0);
     const [perPage, setPerPage] = useState(100);
@@ -257,7 +257,7 @@ function CreateSchema(props) {
     const handleShemaShow =async (row) => {
       let value =await getGlobalSchema(row)
       if(value.data.success == true){
-        if(!value.data){
+        if(!value.data?.data){
           alert.error('No Data Save For This Schema. Please Save global schema for this schema')
         }else{
           setUpdatableRow(row);
@@ -316,7 +316,6 @@ function CreateSchema(props) {
         alert.error('No Retailer Found For This Distributor')
       }
      }
-
   }
 
   const getRetailerListPagination =async (id = distributirID ,activePageRetailerInfo = activePageRetailer ) =>{
@@ -356,7 +355,23 @@ const getRetailerCheck = (id) => {
  
 }
 
+const handleSaveScheme =async (schemeId , retailerID) =>{
+  let saveValue =await saveRetailerSchema(schemeId , [retailerID])
+  if(saveValue.data.success == true){
+    alert.success('Schema Update Successfully')
+  }
+       
+  }
 
+  
+const handleSaveMultiScheme =async (schemeId) =>{
+  let saveValue =await saveRetailerSchema(schemeId , checkRetailerrData)
+  if(saveValue.data.success == true){
+    alert.success('Schema Update Successfully')
+    getRetailerListPagination()
+  }
+       
+  }
   return (
     <React.Fragment>
    <Container fluid>
@@ -435,13 +450,13 @@ const getRetailerCheck = (id) => {
               
            {
              dataDistributor && dataDistributor.length > 0 &&
-            <div className={styles.generatedContent}>
+               <div className={styles.generatedContent}>
                     <div className={`${styles.tableWrapper} table-responsive`}>
                         <table className="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>Select</th>
                                     <th>Sl.</th>
+                                    <th>Select</th>
                                     <th>Distributor Name</th>
                                     {/* <th>Distributor Code</th>
                                     <th>Distributor Tin</th>
@@ -455,6 +470,7 @@ const getRetailerCheck = (id) => {
                                 {dataDistributor && dataDistributor.length>0 &&  dataDistributor?.map((data, index) => {
                                     return (
                                         <tr key={index}>
+                                            <td className={styles.valueText}>{index+1 + (activePage-1) *10}.</td>
                                             <td className={styles.valueText}>
                                               <input
                                                   type="checkbox"
@@ -464,7 +480,6 @@ const getRetailerCheck = (id) => {
                                                       getRetailerList(data.distributor_id)
                                                   }}
                                               /></td>
-                                            <td className={styles.valueText}>{index+1 + (activePage-1) *10}.</td>
                                             <td className={styles.valueText}>{data?.distributor_name}</td>
                                             {/* <td className={styles.valueText}>{data?.distributor_code}</td>
                                             <td className={styles.valueText}>{data?.distributor_tin}</td>
@@ -504,18 +519,37 @@ const getRetailerCheck = (id) => {
 
 
 {
-             dataRetailer && dataRetailer.length > 0 &&
+          dataRetailer && dataRetailer.length > 0 &&
             <div className={styles.generatedContent}>
                     <div className={`${styles.tableWrapper} table-responsive`}>
                         <table className="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>Select</th>
                                     <th>Sl.</th>
-                                    <th>Scheme Name</th>
-                                    <th>Scheme Id</th>
+                                    <th>Select</th>
+                                    <th>
+                                      {
+                                        checkRetailerrData.length > 0 ? 
+                                        <Input type="select" className="form-select" name='module' id="autoSizingSelect" 
+                                                onChange={(e) => {
+                                                      handleSaveMultiScheme(e.target.value)
+                                                  }} 
+                                                >
+                                                    <option defaultValue = '0'>Choose Scheme</option>
+                                                    {
+                                                        dataScheme && dataScheme.length >0 &&  dataScheme?.map((schemeValue)=>{
+                                                      return  <option value={schemeValue.id}>{schemeValue.scheme_name}</option>
+                                                      })
+                                                    }
+                                        </Input>
+                                        :
+                                         'Select Schema'
+                                      }
+                                      
+                                    </th>
+                                    {/* <th>Scheme Id</th> */}
                                     <th>Retailer Code</th>
-                                    <th>Retailer Id</th>
+                                    {/* <th>Retailer Id</th> */}
                                     <th>Master R Number</th>
                                     <th>Ac Number 1rmn</th>
                                 </tr>
@@ -525,19 +559,40 @@ const getRetailerCheck = (id) => {
                                 {dataRetailer && dataRetailer.length>0 &&  dataRetailer?.map((data, index) => {
                                     return (
                                         <tr key={index}>
+                                            <td className={styles.valueText}>{index+1 + (activePageRetailer-1) *10}.</td>
                                             <td className={styles.valueText}>
                                               <input
                                                   type="checkbox"
-                                                  checked={checkRetailerrData.includes( data.ac_number_1rmn) ? true : false}
+                                                  checked={checkRetailerrData.includes( data.id) ? true : false}
                                                   onClick={() => {
-                                                      getRetailerCheck(data.ac_number_1rmn)
+                                                      getRetailerCheck(data.id)
                                                   }}
                                               /></td>
-                                            <td className={styles.valueText}>{index+1 + (activePageRetailer-1) *10}.</td>
-                                            <td className={styles.valueText}>{data?.scheme_name}</td>
-                                            <td className={styles.valueText}>{data?.scheme_id}</td>
+                                           { 
+                                           checkRetailerrData.length > 0 ? <td> {data?.scheme_name} </td> :
+                                           <td className={styles.valueText}>
+                                            <Input type="select" className="form-select" name='module' id="autoSizingSelect" 
+                                              onChange={(e) => {
+                                                    handleSaveScheme(e.target.value ,data.id )
+                                                }} 
+                                              >
+                                              
+                                                    <option defaultValue = '0'>{data?.scheme_name ? data?.scheme_name : 'Choose Scheme'}</option>
+                                                  
+                                                    {
+                                                      
+                                                  dataScheme && dataScheme.length >0 &&  dataScheme?.map((schemeValue)=>{
+                                                      return schemeValue.scheme_name !=data?.scheme_name && <option value={schemeValue.id}>{schemeValue.scheme_name}</option>
+                                                      })
+                                                    }
+                                              </Input>
+                                            </td>                                            
+                                            
+                                          }
+                                            
+                                            {/* <td className={styles.valueText}>{data?.scheme_id}</td> */}
                                             <td className={styles.valueText}>{data?.retailer_code}</td>
-                                            <td className={styles.valueText}>{data?.retailer_id}</td>
+                                            {/* <td className={styles.valueText}>{data?.retailer_id}</td> */}
                                             <td className={styles.valueText}>{data?.master_r_number}</td>
                                             <td className={styles.valueText}>{data?.ac_number_1rmn}</td>
 
@@ -572,95 +627,6 @@ const getRetailerCheck = (id) => {
                     </div>               
               </div>
             }
-
-
-              {/* <Row className="justify-content-center">
-                
-                <Col xl={12} md={12}>
-                <div>
-                        {
-                        // showTable &&
-                            <div className={styles.generatedContent}>
-                                <div className={`${styles.tableWrapper} table-responsive`}>
-                                    <table className="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Sl.</th>
-                                                <th>Scheme Name</th>
-                                                <th>Loan Tenor In Days</th>
-                                                <th>Expiry Date</th>
-                                                <th>Grace Periods In Days</th>
-                                                <th>Rate of Interest</th>
-                                                <th>Penalty Periods</th>
-                                                <th>Daily Penalty</th>
-                                                <th>Processing Cost</th>
-                                                <th>Transaction Fee</th>
-                                                <th>Collection Fee Sharing With Agency</th>
-                                                <th>Action</th>
-                                                <th>Schema Parameter Action</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-                                            {data && data.length>0 &&  data?.map((data, index) => {
-                                                return (
-                                                    <tr key={index}>
-                                                        <td className={styles.valueText}>{index+1 + (activePage-1) *10}.</td>
-                                                        <td className={styles.valueText}>{data?.scheme_name}</td>
-                                                        <td className={styles.valueText}>{data?.loan_tenor_in_days}</td>
-                                                        <td className={styles.valueText}>{data?.expiry_date?.split('T')[0]}</td>
-                                                        <td className={styles.valueText}>{data?.grace_periods_in_days}</td>
-                                                        <td className={styles.valueText}>{data?.rate_of_interest}</td>
-                                                        <td className={styles.valueText}>{data?.penalty_periods}</td>
-                                                        <td className={styles.valueText}>{data?.daily_penalty}</td>
-                                                        <td className={styles.valueText}>{data?.processing_cost}</td>
-                                                        <td className={styles.valueText}>{data?.transaction_fee}</td>
-                                                        <td className={styles.valueText}>{data?.collection_fee_sharing_with_agency}</td>
-
-
-                                                        <td className={styles.valueText}> 
-                                                            <Link
-                                                                className="btn btn-sm btn-clean btn-icon"
-                                                                data-toggle="tooltip"
-                                                                data-placement="bottom"
-                                                                title="Delete"
-                                                                onClick={() => handleShowEye(data)}
-                                                            >
-                                                                <i className="la la-eye text-dinfoanger"></i>
-                                                            </Link>
-                                                        </td>
-                                                        <td className={styles.valueText}> 
-                                                        <Link
-                                                                className="btn btn-sm btn-clean btn-icon"
-                                                                data-toggle="tooltip"
-                                                                data-placement="bottom"
-                                                                title="Delete"
-                                                                onClick={() => handleShemaSave(data)}
-                                                            >
-                                                                <i className="la la-plus text-dinfoanger"></i>
-                                                            </Link>
-                                                            <Link
-                                                                className="btn btn-sm btn-clean btn-icon"
-                                                                data-toggle="tooltip"
-                                                                data-placement="bottom"
-                                                                title="Delete"
-                                                                onClick={() => handleShemaShow(data)}
-                                                            >
-                                                                <i className="la la-eye text-dinfoanger"></i>
-                                                            </Link>
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            })}
-                                        </tbody>
-                                    </table>
-                                </div>
-                               
-                            </div>
-                        }
-                    </div>
-                </Col>
-              </Row> */}
             </div>
           </TabPane>
 
@@ -960,7 +926,7 @@ const getRetailerCheck = (id) => {
                                         </thead>
 
                                         <tbody>
-                                            {data && data.length>0 &&  data?.map((data, index) => {
+                                            {dataScheme && dataScheme.length>0 &&  dataScheme?.map((data, index) => {
                                                 return (
                                                     <tr key={index}>
                                                         <td className={styles.valueText}>{index+1 + (activePage-1) *10}.</td>

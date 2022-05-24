@@ -6,6 +6,7 @@ const SUBMIT_GLOBAL_SCHEMA_INFO_UPLOAD = baseURL+'scheme/parameter';
 const GET_GLOBAL_SCHEMA_INFO = baseURL+'scheme';
 const GET_DISTRIBUTOR_MANUFACTURE_INFO = baseURL+'distributor/distributors';
 const GET_RETAILER_DISTRIBUTOR_INFO = baseURL+'retailer/retailers';
+const GET_RETAILER_SAVE_SCHEMA = baseURL+'retailer/schema';
 
 
 export function schemaSave(value) { 
@@ -68,6 +69,18 @@ export async function getRetailerrWIthDistID(id , activePage , perPage) {
         },
     };
     return await axios.get(`${GET_RETAILER_DISTRIBUTOR_INFO}/${id}`,{params:  {"page": activePage,"per_page": perPage}  }, config);
+}
+
+export async function saveRetailerSchema(Schemeid , ids ) { 
+    const token = localStorage.getItem('token');
+
+    const config = {
+        headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        },
+    };
+    return await axios.put(`${GET_RETAILER_SAVE_SCHEMA}`,  {"scheme_id": Schemeid,"ids": ids}, config);
 }
 
 
