@@ -40,12 +40,12 @@ function SideBar(props) {
       style={{ zIndex: 8888 }}
     >
       {/*begin::Brand*/}
-      <div className="brand flex-column-auto" id="kt_brand">
+      <div className="brand flex-column-auto" id="kt_brand" style={{backgroundColor:'white'}}>
         {/*begin::Logo*/}
         <a href="index.html" className="brand-logo">
           <img
             alt="Logo"
-            style={{ height: 140 }}
+            style={{ height: 65 }}
             src="assets/media/logos/IPDC_Logo.png"
           />
           {/* <h1 className="text-white ">DANA-IPDC </h1> */}

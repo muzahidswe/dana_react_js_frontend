@@ -257,11 +257,11 @@ function CreateSchema(props) {
     const handleShemaShow =async (row) => {
       let value =await getGlobalSchema(row)
       if(value.data.success == true){
-        if(value.data.data.length == 0){
+        if(!value.data){
           alert.error('No Data Save For This Schema. Please Save global schema for this schema')
         }else{
           setUpdatableRow(row);
-          setglobalSchemaAllVAlue(value.data.data)
+          setglobalSchemaAllVAlue(value.data)
           setsaveGlobalSchema(true);
           setGlobalSchemaDisable(true)
           toggle();

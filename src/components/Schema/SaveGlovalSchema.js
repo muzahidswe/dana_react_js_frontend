@@ -38,9 +38,10 @@ function SaveGlovalSchema(props) {
 
 
   useEffect(() => {
+    debugger
     setDefaultValue(props.defaultValue);
-    if(props.globalSchemaAllVAlue.length > 0){
-        setFormData(props.globalSchemaAllVAlue[0])
+    if(props.globalSchemaAllVAlue?.data){
+        setFormData(props.globalSchemaAllVAlue.data)
         setError({})
     }else{
         setFormData({
