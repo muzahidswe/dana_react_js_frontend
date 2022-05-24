@@ -10,10 +10,11 @@ import React, { useEffect, useRef, useState } from "react";
     Container,
     CardBody,
     CardTitle,
-    Button
+    Button,
+    Input
   } from "reactstrap"
 import classnames from "classnames"
-import { getGlobalSchema, schemaSave } from "../../services/Schema/Schema";
+import { getDIstributorWIthManuID, getGlobalSchema, getRetailerrWIthDistID, schemaSave } from "../../services/Schema/Schema";
 import { Link } from "react-router-dom"
 import styles from './Schema.module.css';
 import { baseURL } from "../../constants/constants";
@@ -23,22 +24,25 @@ import { useAlert } from 'react-alert';
 import "flatpickr/dist/themes/material_blue.css";
 import Flatpickr from "react-flatpickr";
 import SaveGlovalSchema from "./SaveGlovalSchema";
+import ReactPaginate from "react-paginate";
 
 const validateNumberPositive = new RegExp(/^(?:[1-9]\d*|0)?(?:\.\d+)?$/);
 const validateNumberPositiveDe = new RegExp(/^(?:[1-9]\d*|0)?(?:\.\d+)?$/);
 
 
 const DATA_TABLE_URL = baseURL+'scheme/list';
+const DATA_TABLE_URL_MANUFACTURE = baseURL+'manufacturer/manufacturers';
+
 
 function CreateSchema(props) {
     const form = useRef(null);
     const alert = useAlert();
     const [folderOpen , setFolderOpen] = useState(false)
-    const [activeTab, toggleTab] = useState("1");
+    const [activeTab, toggleTab] = useState("0");
     const [data, setData] = useState([]);
     const [activePage, setActivePage] = useState(1);
     const [lastPage, setlastPage] = useState(0);
-    const [perPage, setPerPage] = useState(10);
+    const [perPage, setPerPage] = useState(100);
     const [isLoading, setIsLoading] = useState(false);
     const [showTable, setShowTable] = useState(false);
     const [modal, setModal] = useState(false);
@@ -49,6 +53,20 @@ function CreateSchema(props) {
     const [errors, setError] = useState({});
     const [globalSchemaDisable , setGlobalSchemaDisable] = useState(false);
     const [globalSchemaAllVAlue , setglobalSchemaAllVAlue] = useState([]);
+    const [manufactureAllData , setManufactureAllData] = useState([]);
+    const [ManuId , setManuId] = useState();
+    const [lastPageDistributor, setlastPageDistributor] = useState(10);
+    const [perPageDistributor, setPerPageDistributor] = useState(10);
+    const [activePageDistributor, setactivePageDistributor] = useState(1);
+    const [dataDistributor, setDataDistributor] = useState([]);
+    const [distributirID, setdistributirID] = useState('');
+
+    const [lastPageRetailer, setlastPageRetailerr] = useState(0);
+    const [activePageRetailer, setactivePageRetailer] = useState(1);
+    const [perPageRetailer, setPerPageRetailer] = useState(10);
+    const [dataRetailer, setDataRetailer] = useState([]);
+    const [checkRetailerrData, setCheckRetailerData] = useState([]);
+    
 
     const [formData , setFormData] = useState({
         scheme_name:'',
@@ -132,6 +150,7 @@ function CreateSchema(props) {
 
     useEffect(() => {
         getSchemaInfo();
+        getAllManufacture();
     }, []);
     const toggle = () => setModal(!modal);
 
@@ -247,8 +266,6 @@ function CreateSchema(props) {
           setGlobalSchemaDisable(true)
           toggle();
         }
-       
-        
       }else{
         alert.erroe('Network Error')
       }
@@ -257,7 +274,87 @@ function CreateSchema(props) {
       
     }
 
+    const getAllManufacture =async () => {
+      var token = localStorage.getItem("token");
+      await axios.get(DATA_TABLE_URL_MANUFACTURE, {params:  {"page": activePage,"per_page": perPage}  }, {headers: {
+                  // Accept: "application/json",
+                  // "Content-Type": "application/json",
+                  Authorization: "Bearer " + token,
+              }})
+      .then(res => {
+          setManufactureAllData(res?.data?.data.data);
+      }).catch(err => {
+          setData({});
+      });
+    }
 
+   const handleManufactureChange =async (e , activePageDistributorInfo = activePageDistributor) =>{
+     setManuId(e?.target?.value)
+     let distiValue =await getDIstributorWIthManuID(e?.target?.value ?? ManuId , activePageDistributorInfo , perPageDistributor)
+     if(distiValue?.data?.data.data.length > 0){
+      setDataDistributor(distiValue?.data?.data.data)
+       setlastPageDistributor(distiValue?.data?.data?.pagination?.lastPage);
+     }else{
+      setDataDistributor([])
+      setlastPageDistributor(0);
+       alert.error('No Distributor Found For This Manufacturer')
+     }
+   }
+
+   const getRetailerList =async (id) =>{
+     if(distributirID == id){
+      setdistributirID(0)
+      setDataRetailer([])
+     }else{
+      setdistributirID(id)
+      let retailerValue =await getRetailerrWIthDistID(id , activePageRetailer , perPageRetailer)
+      if(retailerValue?.data?.data?.data?.length > 0){
+        setDataRetailer(retailerValue?.data?.data.data)
+        setlastPageRetailerr(retailerValue?.data?.data?.pagination?.lastPage)
+      }else{
+        setDataRetailer([])
+        alert.error('No Retailer Found For This Distributor')
+      }
+     }
+
+  }
+
+  const getRetailerListPagination =async (id = distributirID ,activePageRetailerInfo = activePageRetailer ) =>{
+     let retailerValue =await getRetailerrWIthDistID(id , activePageRetailerInfo , perPageRetailer)
+     if(retailerValue?.data?.data?.data?.length > 0){
+       setDataRetailer(retailerValue?.data?.data.data)
+       setlastPageRetailerr(retailerValue?.data?.data?.pagination?.lastPage)
+     }else{
+       setDataRetailer([])
+       alert.error('No Retailer Found For This Distributor')
+     }
+
+ }
+
+  
+  const handlePageClickDistributor = (e) => {
+    setactivePageDistributor(e.selected +1)
+    handleManufactureChange()
+}
+
+const handlePageClickRetailer = (e) => {
+  setactivePageRetailer(e.selected +1)
+  getRetailerListPagination(distributirID , e.selected +1)
+}
+
+const getRetailerCheck = (id) => {
+  if(checkRetailerrData.includes(id)){
+    let checkRetailerValue = [...checkRetailerrData]
+    const  index = checkRetailerValue.findIndex(x=> x === id); 
+    checkRetailerValue.splice(index,1)  // first positon , second delete and thrid number
+    setCheckRetailerData(checkRetailerValue)
+  }else{
+    let checkRetailerValue = [...checkRetailerrData]
+    checkRetailerValue.push(id)
+    setCheckRetailerData(checkRetailerValue)
+  }
+ 
+}
 
 
   return (
@@ -274,13 +371,26 @@ function CreateSchema(props) {
             <NavLink
               to="#"
               className={classnames({
+                active: activeTab === "0",
+              })}
+              onClick={() => {
+                toggleTab("0")
+              }}
+            >
+              Show SCHEMA
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink
+              to="#"
+              className={classnames({
                 active: activeTab === "1",
               })}
               onClick={() => {
                 toggleTab("1")
               }}
             >
-              SAVE SCHEMA
+              Create SCHEMA
             </NavLink>
           </NavItem>
           <NavItem>
@@ -299,9 +409,265 @@ function CreateSchema(props) {
         </ul>
 
         <TabContent className="p-4" activeTab={activeTab}>
+          
+        <TabPane tabId="0">
+            <div>
+            <div className="mb-3 row">
+                <label
+                htmlFor="example-email-input"
+                className="col-md-2 col-form-label"
+                >
+                All Manufacture List
+                </label>
+                <div className="col-md-3">
+                    <Input type="select" className="form-select" name='module' id="autoSizingSelect" onChange={(e) => {
+                        handleManufactureChange(e)
+                    }}>
+                        <option defaultValue = '0'>Choose Manufacture</option>
+                        {
+                         manufactureAllData && manufactureAllData.length > 0 && manufactureAllData.map((manuValue)=>{
+                           return <option value={manuValue.id}>{manuValue.manufacturer_name}</option>
+                          })
+                        }
+                    </Input>
+                </div>
+            </div>
+              
+           {
+             dataDistributor && dataDistributor.length > 0 &&
+            <div className={styles.generatedContent}>
+                    <div className={`${styles.tableWrapper} table-responsive`}>
+                        <table className="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Select</th>
+                                    <th>Sl.</th>
+                                    <th>Distributor Name</th>
+                                    {/* <th>Distributor Code</th>
+                                    <th>Distributor Tin</th>
+                                    <th>Official Email</th>
+                                    <th>Region Of Operation</th>
+                                    <th>Author Email</th> */}
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {dataDistributor && dataDistributor.length>0 &&  dataDistributor?.map((data, index) => {
+                                    return (
+                                        <tr key={index}>
+                                            <td className={styles.valueText}>
+                                              <input
+                                                  type="checkbox"
+                                                  id="customSwitchsizelg"
+                                                  checked={distributirID == data.distributor_id ? true : false}
+                                                  onClick={() => {
+                                                      getRetailerList(data.distributor_id)
+                                                  }}
+                                              /></td>
+                                            <td className={styles.valueText}>{index+1 + (activePage-1) *10}.</td>
+                                            <td className={styles.valueText}>{data?.distributor_name}</td>
+                                            {/* <td className={styles.valueText}>{data?.distributor_code}</td>
+                                            <td className={styles.valueText}>{data?.distributor_tin}</td>
+                                            <td className={styles.valueText}>{data?.official_email}</td>
+                                            <td className={styles.valueText}>{data?.region_of_operation}</td>
+                                            <td className={styles.valueText}>{data?.autho_rep_email}</td> */}  
+                                        </tr>
+                                    )
+                                 })}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style={{margin: 'auto',width: '30%',paddingBottom:'15px'}}>
+                    <ReactPaginate
+                            breakLabel="..."
+                            nextLabel="next &raquo;"
+                            onPageChange={handlePageClickDistributor}
+                            pageRangeDisplayed={10}
+                            pageCount={lastPageDistributor}
+                            forcePage={activePageDistributor-1}
+                            previousLabel="&laquo; prev"
+                            renderOnZeroPageCount={null}
+                            breakClassName={'page-item'}
+                            breakLinkClassName={'page-link'}
+                            containerClassName={'pagination'}
+                            pageClassName={'page-item'}
+                            pageLinkClassName={'page-link'}
+                            previousClassName={'page-item'}
+                            previousLinkClassName={'page-link'}
+                            nextClassName={'page-item'}
+                            nextLinkClassName={'page-link'}
+                            activeClassName={'active'}
+                        />
+                </div>               
+              </div>
+            }
+
+
+{
+             dataRetailer && dataRetailer.length > 0 &&
+            <div className={styles.generatedContent}>
+                    <div className={`${styles.tableWrapper} table-responsive`}>
+                        <table className="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Select</th>
+                                    <th>Sl.</th>
+                                    <th>Scheme Name</th>
+                                    <th>Scheme Id</th>
+                                    <th>Retailer Code</th>
+                                    <th>Retailer Id</th>
+                                    <th>Master R Number</th>
+                                    <th>Ac Number 1rmn</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {dataRetailer && dataRetailer.length>0 &&  dataRetailer?.map((data, index) => {
+                                    return (
+                                        <tr key={index}>
+                                            <td className={styles.valueText}>
+                                              <input
+                                                  type="checkbox"
+                                                  checked={checkRetailerrData.includes( data.ac_number_1rmn) ? true : false}
+                                                  onClick={() => {
+                                                      getRetailerCheck(data.ac_number_1rmn)
+                                                  }}
+                                              /></td>
+                                            <td className={styles.valueText}>{index+1 + (activePageRetailer-1) *10}.</td>
+                                            <td className={styles.valueText}>{data?.scheme_name}</td>
+                                            <td className={styles.valueText}>{data?.scheme_id}</td>
+                                            <td className={styles.valueText}>{data?.retailer_code}</td>
+                                            <td className={styles.valueText}>{data?.retailer_id}</td>
+                                            <td className={styles.valueText}>{data?.master_r_number}</td>
+                                            <td className={styles.valueText}>{data?.ac_number_1rmn}</td>
+
+                                            
+                                        </tr>
+                                    )
+                                 })}
+                            </tbody>
+                        </table>
+                        <div style={{margin: 'auto',width: '30%',padding:'15px'}}>
+                        <ReactPaginate
+                            breakLabel="..."
+                            nextLabel="next &raquo;"
+                            onPageChange={handlePageClickRetailer}
+                            pageRangeDisplayed={10}
+                            pageCount={lastPageRetailer}
+                            forcePage={activePageRetailer-1}
+                            previousLabel="&laquo; prev"
+                            renderOnZeroPageCount={null}
+                            breakClassName={'page-item'}
+                            breakLinkClassName={'page-link'}
+                            containerClassName={'pagination'}
+                            pageClassName={'page-item'}
+                            pageLinkClassName={'page-link'}
+                            previousClassName={'page-item'}
+                            previousLinkClassName={'page-link'}
+                            nextClassName={'page-item'}
+                            nextLinkClassName={'page-link'}
+                            activeClassName={'active'}
+                        />
+                        </div>
+                    </div>               
+              </div>
+            }
+
+
+              {/* <Row className="justify-content-center">
+                
+                <Col xl={12} md={12}>
+                <div>
+                        {
+                        // showTable &&
+                            <div className={styles.generatedContent}>
+                                <div className={`${styles.tableWrapper} table-responsive`}>
+                                    <table className="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Sl.</th>
+                                                <th>Scheme Name</th>
+                                                <th>Loan Tenor In Days</th>
+                                                <th>Expiry Date</th>
+                                                <th>Grace Periods In Days</th>
+                                                <th>Rate of Interest</th>
+                                                <th>Penalty Periods</th>
+                                                <th>Daily Penalty</th>
+                                                <th>Processing Cost</th>
+                                                <th>Transaction Fee</th>
+                                                <th>Collection Fee Sharing With Agency</th>
+                                                <th>Action</th>
+                                                <th>Schema Parameter Action</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            {data && data.length>0 &&  data?.map((data, index) => {
+                                                return (
+                                                    <tr key={index}>
+                                                        <td className={styles.valueText}>{index+1 + (activePage-1) *10}.</td>
+                                                        <td className={styles.valueText}>{data?.scheme_name}</td>
+                                                        <td className={styles.valueText}>{data?.loan_tenor_in_days}</td>
+                                                        <td className={styles.valueText}>{data?.expiry_date?.split('T')[0]}</td>
+                                                        <td className={styles.valueText}>{data?.grace_periods_in_days}</td>
+                                                        <td className={styles.valueText}>{data?.rate_of_interest}</td>
+                                                        <td className={styles.valueText}>{data?.penalty_periods}</td>
+                                                        <td className={styles.valueText}>{data?.daily_penalty}</td>
+                                                        <td className={styles.valueText}>{data?.processing_cost}</td>
+                                                        <td className={styles.valueText}>{data?.transaction_fee}</td>
+                                                        <td className={styles.valueText}>{data?.collection_fee_sharing_with_agency}</td>
+
+
+                                                        <td className={styles.valueText}> 
+                                                            <Link
+                                                                className="btn btn-sm btn-clean btn-icon"
+                                                                data-toggle="tooltip"
+                                                                data-placement="bottom"
+                                                                title="Delete"
+                                                                onClick={() => handleShowEye(data)}
+                                                            >
+                                                                <i className="la la-eye text-dinfoanger"></i>
+                                                            </Link>
+                                                        </td>
+                                                        <td className={styles.valueText}> 
+                                                        <Link
+                                                                className="btn btn-sm btn-clean btn-icon"
+                                                                data-toggle="tooltip"
+                                                                data-placement="bottom"
+                                                                title="Delete"
+                                                                onClick={() => handleShemaSave(data)}
+                                                            >
+                                                                <i className="la la-plus text-dinfoanger"></i>
+                                                            </Link>
+                                                            <Link
+                                                                className="btn btn-sm btn-clean btn-icon"
+                                                                data-toggle="tooltip"
+                                                                data-placement="bottom"
+                                                                title="Delete"
+                                                                onClick={() => handleShemaShow(data)}
+                                                            >
+                                                                <i className="la la-eye text-dinfoanger"></i>
+                                                            </Link>
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>
+                               
+                            </div>
+                        }
+                    </div>
+                </Col>
+              </Row> */}
+            </div>
+          </TabPane>
+
           <TabPane tabId="1">
             <div>
               <Row className="justify-content-center">
+              
             <Col xl={10} md={10}>
               <Card>
                 <CardBody>

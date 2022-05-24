@@ -140,7 +140,6 @@ function SalesAgentUpload(props) {
                     Authorization: "Bearer " + token,
                 }})
         .then(res => {
-            console.log(res?.data?.data)
             setData(res?.data?.data?.data);
             setlastPage(res?.data?.data?.pagination?.lastPage)
             res.data.success ? setShowTable(true) : setShowTable(false);

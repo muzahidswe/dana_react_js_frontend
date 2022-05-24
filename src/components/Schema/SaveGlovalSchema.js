@@ -69,8 +69,10 @@ const handleSubmit = async  (e) =>{
       e.preventDefault();
       const validationValue =await handleVaidation()
       if(!validationValue){
+        debugger
         formData.scheme_id = defaultValue.id
         let response =await GlobalVAlueschemaSave(formData)
+        debugger
         if(response.data.success == true){
           alert.success('Global Schema updated Successfully');
           setFormData('')

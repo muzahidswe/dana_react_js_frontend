@@ -139,16 +139,7 @@ function SupervisorInfoUpload(props) {
                     Authorization: "Bearer " + token,
                     "Content-Type": "application/json",
                 }})
-        // debugger
-        // const response = await axios({
-        //     method: "get",
-        //     headers: { Authorization: "Bearer " + token },
-        //     data:{"page": activePage,"per_page": perPage},
-        //     url: DATA_TABLE_URL,
-        // })
         .then(res => {
-            debugger
-            console.log(res?.data?.data)
             setData(res?.data?.data.data);
             setlastPage(res?.data?.data?.pagination?.lastPage)
             res.data.success ? setShowTable(true) : setShowTable(false);
@@ -294,7 +285,7 @@ function SupervisorInfoUpload(props) {
                                             data.length > 0 && 
                                             <span onClick={notify}><ExportReactCSV csvData={data} fileName="SupervisorData" /></span>
                                         }
-                                <ToastContainer />
+                                        <ToastContainer />
                                  </span>
                                 </a>                
                             </div>
