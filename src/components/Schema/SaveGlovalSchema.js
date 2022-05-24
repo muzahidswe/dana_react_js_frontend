@@ -38,7 +38,6 @@ function SaveGlovalSchema(props) {
 
 
   useEffect(() => {
-    debugger
     setDefaultValue(props.defaultValue);
     if(props.globalSchemaAllVAlue?.data){
         setFormData(props.globalSchemaAllVAlue.data)
@@ -70,10 +69,8 @@ const handleSubmit = async  (e) =>{
       e.preventDefault();
       const validationValue =await handleVaidation()
       if(!validationValue){
-        debugger
         formData.scheme_id = defaultValue.id
         let response =await GlobalVAlueschemaSave(formData)
-        debugger
         if(response.data.success == true){
           alert.success('Global Schema updated Successfully');
           setFormData('')
