@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useAlert } from "react-alert";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Table } from "reactstrap";
+import produce from "immer";
 
 
 const validateNumberPositive = new RegExp(/^(?:[1-9]\d*|0)?(?:\.\d+)?$/);
@@ -15,7 +16,8 @@ function ShowRMNModal(props) {
   const alert = useAlert();
   const [errors, setError] = useState({});
   const [formData, setFormData] = useState({});
-
+  const [showSBtnPro , setshowSBtnPro] = useState([])
+  const [showCBtnPro , setshowCBtnPro] = useState([])
 
   const handleUpdate = () => {
     if (props.handleUpdate) {
@@ -25,21 +27,57 @@ function ShowRMNModal(props) {
 
 
   useEffect(() => {
-      debugger
     // setDefaultValue(props.getRmnAccount);
     if(props.getRmnAccount){
         setFormData(props.getRmnAccount)
+          let checkShowLimit = [...showSBtnPro]
+            props.getRmnAccount && props.getRmnAccount.map((data)=>{
+              checkShowLimit.push(false)
+            })
+            setshowSBtnPro(checkShowLimit)
+            setshowCBtnPro(checkShowLimit)
         setError({})
     }else{
        
     }
   }, [props.defaultValue,props.getRmnAccount]);
 
+  const handleChangeProposeLimit = async (e , data , index) => {
+         console.log(e , data , index)
+         let checkshowSBtnProIndex = [...showSBtnPro]
+         checkshowSBtnProIndex.splice(index,1,true)
+         setshowSBtnPro(checkshowSBtnProIndex)
+         if (formData.length <= 0) {
+          return;
+      }
+      let draftName;
+      const modifiedItemData = produce(formData, draft => {
+           draftName = draft.find(draftEvent => draftEvent.ac_number_1rmn == parseInt(data.ac_number_1rmn));
+          draftName[e.target.name] = e.target.value;
+      })
+      await setFormData(modifiedItemData);
+  }
 
+  const handleChangeApproveLimit =async (e , data , index) => {
+        let checkshowCBtnProProIndex = [...showCBtnPro]
+        checkshowCBtnProProIndex.splice(index,1,true)
+        setshowCBtnPro(checkshowCBtnProProIndex)
+      let draftName;
+        const modifiedItemData = produce(formData, draft => {
+          draftName = draft.find(draftEvent => draftEvent.ac_number_1rmn == parseInt(data.ac_number_1rmn));
+         draftName[e.target.name] = e.target.value;
+      })
+      await setFormData(modifiedItemData);
+  }
 
-      
+  const handleSaveProposeLimit = (data , index) => {
 
+  }
 
+  const handleSaveCRMLimit = (data , index) => {
+
+  }
+  
   return (
     <div>
       <Modal
@@ -60,7 +98,7 @@ function ShowRMNModal(props) {
                         <th scope="col">AC Number 1rmn</th>
                         <th scope="col">Manufacturer ID</th>
                         <th scope="col">System Limit</th>
-                        <th scope="col">propose Limit</th>
+                        <th scope="col">Propose Limit</th>
                         <th scope="col">CRM Approve Limit</th>
 
                       </tr>
@@ -96,17 +134,51 @@ function ShowRMNModal(props) {
 
                                       <th scope="row">
                                         <div>
-                                          <h6 className="text-truncate font-size-10">
-                                            {data.propose_limit}
-                                          </h6>
+                                            <input
+                                            className="form-control form-control-lg form-control-solid"
+                                            type='number'
+                                            name='propose_limit'
+                                            placeholder='Propose limit'
+                                            value={data?.propose_limit}
+                                            onChange={(e) => {handleChangeProposeLimit(e , data , index)}}
+                                            />
+                                           {
+                                            showSBtnPro[index] && 
+                                              <Button
+                                                      type="button"
+                                                      color="primary"
+                                                      className="btn-sm m-1 btn-rounded row"
+                                                      onClick={(e) => {handleSaveProposeLimit(data , index)}}
+                                                  >
+                                                      Save
+                                              </Button>
+                                            }
+                                          
                                         </div>
                                       </th>
 
                                       <th scope="row">
-                                        <div>
-                                          <h6 className="text-truncate font-size-10">
-                                            {data.crm_approve_limit}
-                                          </h6>
+                                        <div className="row">
+                                           <input
+                                              className="form-control form-control-lg form-control-solid"
+                                              type='number'
+                                              name='crm_approve_limit'
+                                              placeholder='Crm Approve Limit'
+                                              value={data?.crm_approve_limit}
+                                              onChange={(e) => {handleChangeApproveLimit(e , data , index)}}
+                                              />
+                                             { 
+                                             showCBtnPro[index] && 
+                                             <Button
+                                                    type="button"
+                                                    color="primary"
+                                                    className="btn-sm m-1 btn-rounded row"
+                                                    onClick={(e) => {handleSaveCRMLimit(data , index)}}
+                                                >
+                                                    Save
+                                              </Button>
+                                              }
+                                          
                                         </div>
                                       </th>
                                       
