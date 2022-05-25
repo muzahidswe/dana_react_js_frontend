@@ -67,6 +67,7 @@ function CreateSchema(props) {
     const [dataRetailer, setDataRetailer] = useState([]);
     const [checkRetailerrData, setCheckRetailerData] = useState([]);
     const [DisableOption, setDisableOption] = useState([]);
+    const [checkAllRetailer, setcheckAllRetailer] = useState([false]);
     
 
     const [formData , setFormData] = useState({
@@ -373,6 +374,26 @@ const handleSaveMultiScheme =async (schemeId) =>{
   }
        
   }
+
+  const getRetailerCheckAll = () => {
+    if(!checkAllRetailer[activePageRetailer-1]){
+      let checkRetailerIndex = [...checkAllRetailer]
+      checkRetailerIndex.splice(activePageRetailer-1,1,true)
+      setcheckAllRetailer(checkRetailerIndex)
+      let checkRetailerValue = [...checkRetailerrData]
+      dataRetailer.map((data)=>{
+        checkRetailerValue.push(data.id)
+      })
+      setCheckRetailerData(checkRetailerValue)
+    }else{
+      let checkRetailerIndex = [...checkAllRetailer]
+      checkRetailerIndex.splice(activePageRetailer-1,1,false)
+      setcheckAllRetailer(checkRetailerIndex)
+      setCheckRetailerData([])
+    }
+  }
+
+
   return (
     <React.Fragment>
    <Container fluid>
@@ -527,7 +548,18 @@ const handleSaveMultiScheme =async (schemeId) =>{
                             <thead>
                                 <tr>
                                     <th>Sl.</th>
-                                    <th>Select</th>
+                                    <th>Select
+                                        <span className='ml-3'>
+                                          <input
+                                              type="checkbox"
+                                              checked={checkAllRetailer[activePageRetailer-1] ? true : false}
+                                              onClick={() => {
+                                                  getRetailerCheckAll(dataRetailer)
+                                              }}
+                                          />
+                                        </span>
+                                        
+                                    </th>
                                     <th>
                                       {
                                         checkRetailerrData.length > 0 ? 
