@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useAlert } from "react-alert";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Table } from "reactstrap";
 import produce from "immer";
+import { updateLimitValue } from "../../../services/Schema/Schema";
 
 
 const validateNumberPositive = new RegExp(/^(?:[1-9]\d*|0)?(?:\.\d+)?$/);
@@ -70,13 +71,34 @@ function ShowRMNModal(props) {
       await setFormData(modifiedItemData);
   }
 
-  const handleSaveProposeLimit = (data , index) => {
-
+  const handleSaveProposeLimit =async (data , index) => {
+      let dataValue = {...data}
+      dataValue.type= 'ProposeLimit'
+      console.log(data)
+      let value =await updateLimitValue(dataValue)
+      if(value.data.success){
+        alert.success('Propose Limit Update Successfully')
+        let checkshowSBtnProIndex = [...showSBtnPro]
+         checkshowSBtnProIndex.splice(index,1,false)
+         setshowSBtnPro(checkshowSBtnProIndex)
+      }else{
+        alert.error('Network Error')
+      }
   }
 
-  const handleSaveCRMLimit = (data , index) => {
-
-  }
+  const handleSaveCRMLimit =async (data , index) => {
+    let dataValue = {...data}
+    dataValue.type= 'NotProposeLimit'
+      console.log(data)
+      let value =await updateLimitValue(dataValue)
+      if(value.data.success){
+        alert.success('Propose Limit Update Successfully')
+        let checkshowCBtnProProIndex = [...showCBtnPro]
+        checkshowCBtnProProIndex.splice(index,1,true)
+        setshowCBtnPro(checkshowCBtnProProIndex)
+      }else{
+        alert.error('Network Error')
+      }  }
   
   return (
     <div>

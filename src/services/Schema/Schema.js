@@ -7,6 +7,7 @@ const GET_GLOBAL_SCHEMA_INFO = baseURL+'scheme';
 const GET_DISTRIBUTOR_MANUFACTURE_INFO = baseURL+'distributor/distributors';
 const GET_RETAILER_DISTRIBUTOR_INFO = baseURL+'retailer/retailers';
 const GET_RETAILER_SAVE_SCHEMA = baseURL+'retailer/schema';
+const PUT_UPDATE_LIMIT= baseURL+'retailer/updateLimit';
 
 
 export function schemaSave(value) { 
@@ -81,6 +82,20 @@ export async function saveRetailerSchema(Schemeid , ids ) {
         },
     };
     return await axios.put(`${GET_RETAILER_SAVE_SCHEMA}`,  {"scheme_id": Schemeid,"ids": ids}, config);
+}
+
+
+export async function updateLimitValue(value ) { 
+    const token = localStorage.getItem('token');
+
+    const config = {
+        headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        },
+    };
+    
+    return await axios.put(`${PUT_UPDATE_LIMIT}/${value.ac_number_1rmn}`, {"limitValue":value.type == 'ProposeLimit' ? value.propose_limit : value.crm_approve_limit,"type": value.type}, config);
 }
 
 
