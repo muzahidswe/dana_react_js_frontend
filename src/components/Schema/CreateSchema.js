@@ -37,7 +37,6 @@ const DATA_TABLE_URL_MANUFACTURE = baseURL+'manufacturer/manufacturers';
 function CreateSchema(props) {
     const form = useRef(null);
     const alert = useAlert();
-    const [folderOpen , setFolderOpen] = useState(false)
     const [activeTab, toggleTab] = useState("0");
     const [dataScheme, setData] = useState([]);
     const [activePage, setActivePage] = useState(1);
@@ -115,7 +114,7 @@ function CreateSchema(props) {
       checkFieldisvalid(name, value);
       // setFormData({ ...fromdata, [name]: value })
       setDate(value)
-  }
+    }
   
 
     const handleSubmit = (e) =>{
@@ -160,65 +159,65 @@ function CreateSchema(props) {
         setUpdatableRow(row);
         setOnEye(true);
         toggle();
-      };
+    };
 
-      const handleVaidation = () => {
-        // const modifiedV = { ...validation }
-        let newError = { ...errors };
-        let value = false
-        if (formData.scheme_name === "") {
-            value=true
-            newError['scheme_name'] =  'Select scheme_name';
-          } else {
-            value=false
-          }
-      
-          if (formData.rate_of_interest < 0) {
-            value=true
-            newError['rate_of_interest'] =  'Rate of interest value should be positive';
-          } else {
-          }
-      
-          if (formData.loan_tenor_in_days < 0) {
-            value=true
-            newError['loan_tenor_in_days'] =  'Loan tenor in days value should be positive';
-          } else {
-          }
-      
-          if (date === "") {
-            value=true
-            newError['expiry_date'] =  'Select expiry_date';
-          } else {
-          }
-      
-          if (formData.processing_cost < 0) {
-            value=true
-            newError['processing_cost'] =  'Processing cost value should be positive';
-          } else {
-          }
-          if (formData.transaction_fee < 0) {
-            value=true
-            newError['transaction_fee'] =  'Transaction fee value should be positive';
-          } else {
-          }
-          if (formData.collection_fee_sharing_with_agency < 0) {
-            value=true
-            newError['collection_fee_sharing_with_agency'] =  'Collection fee sharing with agency value should be positive';
-          } else {
-          }
-        setError(newError);
-          return value
-      }
+    const handleVaidation = () => {
+      // const modifiedV = { ...validation }
+      let newError = { ...errors };
+      let value = false
+      if (formData.scheme_name === "") {
+          value=true
+          newError['scheme_name'] =  'Select scheme_name';
+        } else {
+          value=false
+        }
+    
+        if (formData.rate_of_interest < 0) {
+          value=true
+          newError['rate_of_interest'] =  'Rate of interest value should be positive';
+        } else {
+        }
+    
+        if (formData.loan_tenor_in_days < 0) {
+          value=true
+          newError['loan_tenor_in_days'] =  'Loan tenor in days value should be positive';
+        } else {
+        }
+    
+        if (date === "") {
+          value=true
+          newError['expiry_date'] =  'Select expiry_date';
+        } else {
+        }
+    
+        if (formData.processing_cost < 0) {
+          value=true
+          newError['processing_cost'] =  'Processing cost value should be positive';
+        } else {
+        }
+        if (formData.transaction_fee < 0) {
+          value=true
+          newError['transaction_fee'] =  'Transaction fee value should be positive';
+        } else {
+        }
+        if (formData.collection_fee_sharing_with_agency < 0) {
+          value=true
+          newError['collection_fee_sharing_with_agency'] =  'Collection fee sharing with agency value should be positive';
+        } else {
+        }
+      setError(newError);
+        return value
+    }
 
-      const handleShemaSave = (row) => {
-        setglobalSchemaAllVAlue([])
-        setGlobalSchemaDisable(false)
-        setUpdatableRow(row);
-        setsaveGlobalSchema(true);
-        toggle();
-      };
+    const handleShemaSave = (row) => {
+      setglobalSchemaAllVAlue([])
+      setGlobalSchemaDisable(false)
+      setUpdatableRow(row);
+      setsaveGlobalSchema(true);
+      toggle();
+    };
 
-      const checkFieldisvalid = (name, value) => {
+    const checkFieldisvalid = (name, value) => {
         let newError = { ...errors };
         switch (name) {
             case 'scheme_name':
@@ -288,7 +287,7 @@ function CreateSchema(props) {
       });
     }
 
-   const handleManufactureChange =async (e , activePageDistributorInfo = activePageDistributor) =>{
+    const handleManufactureChange =async (e , activePageDistributorInfo = activePageDistributor) =>{
      setManuId(e?.target?.value)
      let distiValue =await getDIstributorWIthManuID(e?.target?.value ?? ManuId , activePageDistributorInfo , perPageDistributor)
      if(distiValue?.data?.data.data.length > 0){
@@ -299,7 +298,7 @@ function CreateSchema(props) {
       setlastPageDistributor(0);
        alert.error('No Distributor Found For This Manufacturer')
      }
-   }
+    }
 
    const getRetailerList =async (id) =>{
      if(distributirID == id){
@@ -316,55 +315,55 @@ function CreateSchema(props) {
         alert.error('No Retailer Found For This Distributor')
       }
      }
-  }
+   }
 
-  const getRetailerListPagination =async (id = distributirID ,activePageRetailerInfo = activePageRetailer ) =>{
-     let retailerValue =await getRetailerrWIthDistID(id , activePageRetailerInfo , perPageRetailer)
-     if(retailerValue?.data?.data?.data?.length > 0){
-       setDataRetailer(retailerValue?.data?.data.data)
-       setlastPageRetailerr(retailerValue?.data?.data?.pagination?.lastPage)
-     }else{
-       setDataRetailer([])
-       alert.error('No Retailer Found For This Distributor')
-     }
+   const getRetailerListPagination =async (id = distributirID ,activePageRetailerInfo = activePageRetailer ) =>{
+      let retailerValue =await getRetailerrWIthDistID(id , activePageRetailerInfo , perPageRetailer)
+      if(retailerValue?.data?.data?.data?.length > 0){
+        setDataRetailer(retailerValue?.data?.data.data)
+        setlastPageRetailerr(retailerValue?.data?.data?.pagination?.lastPage)
+      }else{
+        setDataRetailer([])
+        alert.error('No Retailer Found For This Distributor')
+      }
 
- }
+   }
 
   
   const handlePageClickDistributor = (e) => {
     setactivePageDistributor(e.selected +1)
     handleManufactureChange()
-}
-
-const handlePageClickRetailer = (e) => {
-  setactivePageRetailer(e.selected +1)
-  getRetailerListPagination(distributirID , e.selected +1)
-}
-
-const getRetailerCheck = (id) => {
-  if(checkRetailerrData.includes(id)){
-    let checkRetailerValue = [...checkRetailerrData]
-    const  index = checkRetailerValue.findIndex(x=> x === id); 
-    checkRetailerValue.splice(index,1)  // first positon , second delete and thrid number
-    setCheckRetailerData(checkRetailerValue)
-  }else{
-    let checkRetailerValue = [...checkRetailerrData]
-    checkRetailerValue.push(id)
-    setCheckRetailerData(checkRetailerValue)
   }
- 
-}
 
-const handleSaveScheme =async (schemeId , retailerID) =>{
-  let saveValue =await saveRetailerSchema(schemeId , [retailerID])
-  if(saveValue.data.success == true){
-    alert.success('Schema Update Successfully')
+  const handlePageClickRetailer = (e) => {
+    setactivePageRetailer(e.selected +1)
+    getRetailerListPagination(distributirID , e.selected +1)
   }
-       
+
+  const getRetailerCheck = (id) => {
+    if(checkRetailerrData.includes(id)){
+      let checkRetailerValue = [...checkRetailerrData]
+      const  index = checkRetailerValue.findIndex(x=> x === id); 
+      checkRetailerValue.splice(index,1)  // first positon , second delete and thrid number
+      setCheckRetailerData(checkRetailerValue)
+    }else{
+      let checkRetailerValue = [...checkRetailerrData]
+      checkRetailerValue.push(id)
+      setCheckRetailerData(checkRetailerValue)
+    }
+  
+  }
+
+  const handleSaveScheme =async (schemeId , retailerID) =>{
+    let saveValue =await saveRetailerSchema(schemeId , [retailerID])
+    if(saveValue.data.success == true){
+      alert.success('Schema Update Successfully')
+    }
+        
   }
 
   
-const handleSaveMultiScheme =async (schemeId) =>{
+  const handleSaveMultiScheme =async (schemeId) =>{
   let saveValue =await saveRetailerSchema(schemeId , checkRetailerrData)
   if(saveValue.data.success == true){
     alert.success('Schema Update Successfully')
