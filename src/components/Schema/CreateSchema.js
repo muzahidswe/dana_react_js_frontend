@@ -272,8 +272,6 @@ function CreateSchema(props) {
         alert.erroe('Network Error')
       }
       console.log(value)
-     
-      
     }
 
     const getAllManufacture =async () => {
@@ -479,7 +477,14 @@ const handleSaveMultiScheme =async (schemeId) =>{
                                 <tr>
                                     <th>Sl.</th>
                                     <th>Select</th>
-                                    <th>Distributor Name</th>
+                                    <th>Name</th>
+                                    <th>Code</th>
+                                    <th>Email</th>
+                                    <th>Official Division</th>
+                                    <th>Official Contact Number</th>
+                                    <th>Official Address</th>
+                                    <th>Officie District</th>
+
                                     {/* <th>Distributor Code</th>
                                     <th>Distributor Tin</th>
                                     <th>Official Email</th>
@@ -503,6 +508,13 @@ const handleSaveMultiScheme =async (schemeId) =>{
                                                   }}
                                               /></td>
                                             <td className={styles.valueText}>{data?.distributor_name}</td>
+                                            <td className={styles.valueText}>{data?.distributor_code}</td>
+                                            <td className={styles.valueText}>{data?.official_email}</td>
+                                            <td className={styles.valueText}>{data?.ofc_division}</td>
+                                            <td className={styles.valueText}>{data?.official_contact_number}</td>
+                                            <td className={styles.valueText}>{data?.ofc_address1}</td>
+                                            <td className={styles.valueText}>{data?.ofc_district}</td>
+
                                             {/* <td className={styles.valueText}>{data?.distributor_code}</td>
                                             <td className={styles.valueText}>{data?.distributor_tin}</td>
                                             <td className={styles.valueText}>{data?.official_email}</td>
@@ -582,9 +594,14 @@ const handleSaveMultiScheme =async (schemeId) =>{
                                     </th>
                                     {/* <th>Scheme Id</th> */}
                                     <th>Retailer Code</th>
+                                    <th>Retailer Name</th>
                                     {/* <th>Retailer Id</th> */}
-                                    <th>Master R Number</th>
-                                    <th>Ac Number 1rmn</th>
+                                    <th>Master Account Number</th>
+                                    <th>Author Rep Full Name</th>
+                                    <th>Author Rep Phone</th>
+                                    <th>Region Operation</th>
+                                    
+                                    {/* <th>Ac Number 1rmn</th> */}
                                 </tr>
                             </thead>
 
@@ -625,9 +642,13 @@ const handleSaveMultiScheme =async (schemeId) =>{
                                             
                                             {/* <td className={styles.valueText}>{data?.scheme_id}</td> */}
                                             <td className={styles.valueText}>{data?.retailer_code}</td>
+                                            <td className={styles.valueText}>{data?.retailer_name}</td>
                                             {/* <td className={styles.valueText}>{data?.retailer_id}</td> */}
-                                            <td className={styles.valueText}>{data?.master_r_number}</td>
-                                            <td className={styles.valueText}>{data?.ac_number_1rmn}</td>
+                                            <td className={styles.valueText}>{data?.ac_number_1rn}</td>
+                                            {/* <td className={styles.valueText}>{data?.ac_number_1rmn}</td> */}
+                                            <td className={styles.valueText}>{data?.autho_rep_full_name}</td>
+                                            <td className={styles.valueText}>{data?.autho_rep_phone}</td>
+                                            <td className={styles.valueText}>{data?.region_operation}</td>
 
                                             
                                         </tr>

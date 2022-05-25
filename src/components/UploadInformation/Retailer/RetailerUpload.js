@@ -12,6 +12,11 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from './RetailerUpload.module.css';
 import { ExportReactCSV } from "../../../services/ExportToCSV/ExportToCsv";
+import ReactPaginate from "react-paginate";
+import { Button } from "reactstrap";
+import { getMasterRetailer } from "../../../services/Retailer/Retailer";
+import ShowRMNModal from "./ShowRMNModal";
+
 // import ReactPaginate from 'react-paginate';
 
 const DATA_TABLE_URL = baseURL+'retailer/retailers';
@@ -26,6 +31,12 @@ function RetailerUpload(props) {
     };
 
     const [loading, setLoading] = useState(false);
+    const [lastPage, setlastPage] = useState(0);
+    const [perPage, setPerPage] = useState(10);
+    const [activePage, setActivePage] = useState(1);
+    const [modal, setModal] = useState(false);
+    const [getRmnAccount, setRmnAccount] = useState(false);
+    const [RMNModal, setRMNModal] = useState(false);
 
     const uploadFile = Yup.object().shape({
         file: Yup.mixed().required()
@@ -113,18 +124,18 @@ function RetailerUpload(props) {
         downloadLink.click();
     }
 
-    const getRetailerInfo = async () => {
+    const getRetailerInfo = async (activePage=1) => {
         setIsLoading(true);
 
         var token = localStorage.getItem("token");
-        await axios.get(DATA_TABLE_URL, {}, {headers: {
+        await axios.get(DATA_TABLE_URL,{params:  {"page": activePage,"per_page": perPage}  }, {headers: {
                     // Accept: "application/json",
                     // "Content-Type": "application/json",
                     Authorization: "Bearer " + token,
                 }})
         .then(res => {
-            console.log(res?.data?.data)
-            setData(res?.data?.data);
+            setData(res?.data?.data?.data);
+            setlastPage(res?.data?.data?.pagination?.lastPage)
             res.data.success ? setShowTable(true) : setShowTable(false);
         }).catch(err => {
             setData({});
@@ -136,6 +147,30 @@ function RetailerUpload(props) {
         getRetailerInfo();
     }, []);
     
+    const handlePageClick = (e) => {
+        console.log('handlePageClick',e.selected +1)
+        setActivePage(e.selected +1)
+        getRetailerInfo(e.selected +1)
+    } 
+
+    const ShowMasterViewModal =async (row) => {
+        let value =await getMasterRetailer(row)
+        if(value.data.success == true){
+          if(value.data.data.length > 0){
+            setRmnAccount(value.data.data)
+            setRMNModal(true);
+            toggle();
+          }else{
+            alert.error('No Data Found For This Master Account')
+          }
+        }else{
+          alert.erroe('Network Error')
+        }
+        console.log(value)
+    }
+
+    const toggle = () => setModal(!modal);
+
     return (       
         <>
         <Card className="m-5">
@@ -189,7 +224,105 @@ function RetailerUpload(props) {
                             </div>
                         </div>
                     </form>
+                    {isLoading ? 
+                    <div>
+                        <div style={{ textAlign: "center" }}>
+                            <Loader type="Rings" color="#00BFFF" height={100} width={100} />
+                        </div>
+                    </div>
+                    : 
+                    <div>
+                        {
+                        // showTable &&
+                            <div className={styles.generatedContent}>
+                                <div className={`${styles.tableWrapper} table-responsive`}>
+                                    <table className="table table-bordered manufacture">
+                                        <thead>
+                                            <tr>
+                                                <th>Sl.</th>
+                                                <th>Retailer Name</th>
+                                                <th>Retailer NID</th>
+                                                <th>Master Account</th>
+                                                <th>Phone</th>
+                                                <th>Rtailer Code</th>
+                                                <th>Retailer Tin</th>
+                                                <th>Authr Rep Full Name</th>
+                                                <th>Author Rep Phone</th>
+                                                <th>Region Operation</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            {data && data.length>0 &&  data?.map((data, index) => {
+                                                return (
+                                                    <tr key={index}>
+                                                        <td className={styles.valueText}>{index+1 + (activePage-1) *10}.</td>
+                                                        <td className={styles.valueText}>{data?.retailer_name}</td>
+                                                        <td className={styles.valueText}>{data?.retailer_nid}</td>
+                                                        <td className={styles.valueText}>
+                                                        <Button
+                                                            type="button"
+                                                            color="primary"
+                                                            className="btn-sm btn-rounded"
+                                                            onClick={()=>ShowMasterViewModal(data)}
+                                                        >
+                                                            {data?.master_r_number}
+                                                        </Button>
+                                                            
+                                                        </td>
+                                                        
+                                                        <td className={styles.valueText}>{data?.phone}</td>
+                                                        <td className={styles.valueText}>{data?.retailer_code}</td>
+                                                        <td className={styles.valueText}>{data?.retailer_tin}</td>
+                                                        <td className={styles.valueText}>{data?.autho_rep_full_name}</td>
+                                                        <td className={styles.valueText}>{data?.autho_rep_phone}</td>
+                                                        <td className={styles.valueText}>{data?.region_operation}</td>
+                                                        
+                                                    </tr>
+                                                )
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                            </div>
+                        }
+                    </div>
+                }
             </Card.Body>
+            { 
+               showTable &&
+                <div className="paginationMiddle" style={{margin:'auto' , paddingBottom:'5px'}}>
+                    <ReactPaginate
+                            breakLabel="..."
+                            nextLabel="next &raquo;"
+                            onPageChange={handlePageClick}
+                            pageRangeDisplayed={10}
+                            pageCount={lastPage}
+                            forcePage={activePage-1}
+                            previousLabel="&laquo; prev"
+                            renderOnZeroPageCount={null}
+                            breakClassName={'page-item'}
+                            breakLinkClassName={'page-link'}
+                            containerClassName={'pagination'}
+                            pageClassName={'page-item'}
+                            pageLinkClassName={'page-link'}
+                            previousClassName={'page-item'}
+                            previousLinkClassName={'page-link'}
+                            nextClassName={'page-item'}
+                            nextLinkClassName={'page-link'}
+                            activeClassName={'active'}
+                        />
+                </div>}
+                {RMNModal && (
+                    <ShowRMNModal
+                    modalTitle="Show All Master Account Info"
+                    btnName="Save Global Schema"
+                    toggle={toggle}
+                    modal={modal}
+                    getRmnAccount={getRmnAccount}
+                    />
+                )}
         </Card>
        </>     
     );
