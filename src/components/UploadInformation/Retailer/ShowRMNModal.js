@@ -107,7 +107,7 @@ function ShowRMNModal(props) {
         zIndex={9999}
         isOpen={props.modal}
         toggle={props.toggle}
-        className={`modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg `}
+        className={`modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl `}
         style={{ zIndex: 9999 }}
        >
         <ModalHeader className="modal-header">
@@ -117,14 +117,33 @@ function ShowRMNModal(props) {
           <div className="table-responsive">
                   <Table className="table table-centered table-nowrap">
                     <thead>
-                      <tr>
-                        <th scope="col">AC Number 1rmn</th>
-                        <th scope="col">Manufacturer ID</th>
-                        <th scope="col">System Limit</th>
-                        <th scope="col">Propose Limit</th>
-                        <th scope="col">CRM Approve Limit</th>
-
+                    <tr>
+                          <th rowSpan="2" colSpan="1" style={{textAlign: 'center'}}>
+                          AC Number 1rmn
+                          </th>
+                        
+                          <th rowSpan="1" colSpan="3" style={{textAlign: 'center',borderBottom: '5px solid #9f389e'}}>
+                                  LIMIT
+                          </th>
+                          <th rowSpan="2" colSpan="1" style={{textAlign: 'center'}}>
+                              Distributor Name
+                          </th>
+                          <th rowSpan="2" colSpan="1" style={{textAlign: 'center'}}>
+                                Retailer Name
+                          </th>
+                         
+                          <th rowSpan="2" colSpan="1" style={{textAlign: 'center'}}>
+                              Manufacturer Name
+                          </th>
+                          
                       </tr>
+
+                      <tr>
+                        <th scope="col" style={{textAlign: 'center'}}>System </th>
+                        <th scope="col" style={{textAlign: 'center'}}>Proposed </th>
+                        <th scope="col" style={{textAlign: 'center'}}>CRM Approved</th>
+                      </tr>
+                     
                     </thead>
                     <tbody>
                       {formData && formData.length>0 &&  formData?.map((data, index) => {
@@ -133,32 +152,25 @@ function ShowRMNModal(props) {
 
                                       <th scope="row">
                                         <div>
-                                          <h6 className="text-truncate font-size-10">
+                                          <h6 className="text-truncate font-size-10" style={{textAlign: 'center'}}>
                                             {data.ac_number_1rmn}
                                           </h6>
                                         </div>
                                       </th>
-
+                          
                                       <th scope="row">
                                         <div>
-                                          <h6 className="text-truncate font-size-10">
-                                            {data.manufacturer_id}
-                                          </h6>
-                                        </div>
-                                      </th>
-
-                                      <th scope="row">
-                                        <div>
-                                          <h6 className="text-truncate font-size-10">
+                                          <h6 className="text-truncate font-size-10" style={{textAlign: 'center'}}>
                                             {data.system_limit}
                                           </h6>
                                         </div>
                                       </th>
 
-                                      <th scope="row">
+                                      <th scope="row" >
                                         <div>
                                             <input
                                             className="form-control form-control-lg form-control-solid"
+                                            style={{textAlign: 'center'}}
                                             type='number'
                                             name='propose_limit'
                                             placeholder='Propose limit'
@@ -183,6 +195,7 @@ function ShowRMNModal(props) {
                                       <th scope="row">
                                         <div className="row">
                                            <input
+                                              style={{textAlign: 'center'}}
                                               className="form-control form-control-lg form-control-solid"
                                               type='number'
                                               name='crm_approve_limit'
@@ -202,6 +215,27 @@ function ShowRMNModal(props) {
                                               </Button>
                                               }
                                           
+                                        </div>
+                                      </th>
+                                      <th scope="row">
+                                        <div>
+                                          <h6 className="text-truncate font-size-10" style={{textAlign: 'center'}}>
+                                            {data.distributor_name}
+                                          </h6>
+                                        </div>
+                                      </th>
+                                      <th scope="row">
+                                        <div>
+                                          <h6 className="text-truncate font-size-10" style={{textAlign: 'center'}}>
+                                            {data.retailer_name}
+                                          </h6>
+                                        </div>
+                                      </th>
+                                      <th scope="row">
+                                        <div>
+                                          <h6 className="text-truncate font-size-10" style={{textAlign: 'center'}}>
+                                            {data.manufacturer_name}
+                                          </h6>
                                         </div>
                                       </th>
                                       
