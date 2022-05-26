@@ -94,7 +94,7 @@ function ShowRMNModal(props) {
       if(value.data.success){
         alert.success('Propose Limit Update Successfully')
         let checkshowCBtnProProIndex = [...showCBtnPro]
-        checkshowCBtnProProIndex.splice(index,1,true)
+        checkshowCBtnProProIndex.splice(index,1,false)
         setshowCBtnPro(checkshowCBtnProProIndex)
       }else{
         alert.error('Network Error')
