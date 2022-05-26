@@ -98,7 +98,8 @@ function ShowRMNModal(props) {
         setshowCBtnPro(checkshowCBtnProProIndex)
       }else{
         alert.error('Network Error')
-      }  }
+      } 
+     }
   
   return (
     <div>
