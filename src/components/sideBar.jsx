@@ -45,7 +45,7 @@ function SideBar(props) {
         <a href="index.html" className="brand-logo">
           <img
             alt="Logo"
-            style={{ height: 65 }}
+            style={{ height: '80px',padding: '10px' }}
             src="assets/media/logos/IPDC_Logo.png"
           />
           {/* <h1 className="text-white ">DANA-IPDC </h1> */}

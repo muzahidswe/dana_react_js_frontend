@@ -59,7 +59,6 @@ function CreateSchema(props) {
     const [activePageDistributor, setactivePageDistributor] = useState(1);
     const [dataDistributor, setDataDistributor] = useState([]);
     const [distributirID, setdistributirID] = useState('');
-
     const [lastPageRetailer, setlastPageRetailerr] = useState(0);
     const [activePageRetailer, setactivePageRetailer] = useState(1);
     const [perPageRetailer, setPerPageRetailer] = useState(10);
@@ -108,6 +107,7 @@ function CreateSchema(props) {
         }
         console.log('formdataformdata', formData)
     }
+
     const handleDateChange = (selectedDates, dateStr, instance,valueALl) => {
       // let fromdata = { ...formData };
       const { name, value } = instance.input
@@ -122,15 +122,19 @@ function CreateSchema(props) {
           const validation = handleVaidation()
           if(!validation){
             formData.expiry_date = date
-            schemaSave(formData)
-            alert.success('Schema updated Successfully');
+            let schemaValue = schemaSave(formData)
+            if(schemaValue){
+              alert.success('Schema updated Successfully');
               setFormData('')
               form.current.reset();
+            }
+            
           }else{
 
           }
          
     }
+
     const getSchemaInfo = async (activePage=1) => {
         setIsLoading(true);
         var token = localStorage.getItem("token");
@@ -390,6 +394,10 @@ function CreateSchema(props) {
     }
   }
 
+  const shcemaListToggle = () => {
+          toggleTab("2")
+          getSchemaInfo()
+  }
 
   return (
     <React.Fragment>
@@ -411,7 +419,7 @@ function CreateSchema(props) {
                     toggleTab("0")
                   }}
                 >
-                  Show SCHEMA
+                 SCHEMA Manager
                 </NavLink>
               </NavItem>
               <NavItem>
@@ -434,7 +442,8 @@ function CreateSchema(props) {
                     active: activeTab === "2",
                   })}
                   onClick={() => {
-                    toggleTab("2")
+                    shcemaListToggle("2")
+                    // toggleTab("2")
                   }}
                 >
                   SCHEMA LIST
@@ -551,16 +560,16 @@ function CreateSchema(props) {
                 }
 
 
-    {
-              dataRetailer && dataRetailer.length > 0 &&
+                {
+                dataRetailer && dataRetailer.length > 0 &&
                 <div className={styles.generatedContent}>
                         <div className={`${styles.tableWrapper} table-responsive`}>
                             <table className="table table-bordered">
                                 <thead>
                                     <tr>
                                         <th>Sl.</th>
-                                        <th>Select
-                                            <span className='ml-3'>
+                                        <th>
+                                            <span className='mr-3'>
                                               <input
                                                   type="checkbox"
                                                   checked={checkAllRetailer[activePageRetailer-1] ? true : false}
@@ -568,6 +577,7 @@ function CreateSchema(props) {
                                                       getRetailerCheckAll(dataRetailer)
                                                   }}
                                               />
+                                              <span className='ml-3'>Select</span>
                                             </span>
                                             
                                         </th>

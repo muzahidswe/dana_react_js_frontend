@@ -355,7 +355,7 @@ function ManufactureInfoUpload(props) {
                                                             >
                                                                 <i className="la la-edit text-info"></i>
                                                             </Link>          
-                                                            <Link
+                                                            {/* <Link
                                                                 className="btn btn-sm btn-clean btn-icon"
                                                                 data-toggle="tooltip"
                                                                 data-placement="bottom"
@@ -363,7 +363,7 @@ function ManufactureInfoUpload(props) {
                                                                 onClick={() => handleDelete(data)}
                                                             >
                                                                 <i className="la la-trash text-danger"></i>
-                                                            </Link>  
+                                                            </Link>   */}
                                                             <Link
                                                                 className="btn btn-sm btn-clean btn-icon"
                                                                 data-toggle="tooltip"
