@@ -62,19 +62,19 @@ function App() {
                 {user && <TopBar />}
                   <Switch>
 
-                      {/* MyProfile information */}
+                      {/* MyProfile information Start */}
 
                       <ProtectedRoute path="/myProfile" component={Myprofile} />
 
-                      {/* MyProfile information */}
+                      {/* MyProfile information End */}
 
-                      {/* menu add  */}
+                      {/* Menu Add Start */}
 
                       <ProtectedRoute path="/menu-add" component={AddMenu} />
 
-                      {/* menu add  */}
+                      {/* Menu Add End */}
 
-                      {/* upload information */}
+                      {/* Upload Information Start */}
 
                       <ProtectedRoute path="/upload-distributor-onboarding-data" component={InfoUpload} />
                       <ProtectedRoute path="/upload-sales-agent-onboarding-data" component={SalesAgentUpload} />
@@ -85,7 +85,7 @@ function App() {
                       <ProtectedRoute path="/create_schema" component={CreateSchema} />
 
 
-                      {/* upload information */}
+                      {/* Upload Information End */}
 
                       <Route path="/" exact component={Root} />
 
