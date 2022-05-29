@@ -63,7 +63,7 @@ function ShowAllSchemaModal(props) {
             name="distributor_name"
             type="text"
             label="Expiry Date"
-            inputDefaultValue={props?.defaultValue?.expiry_date}
+            inputDefaultValue={props?.defaultValue?.expiry_date?.split('T')[0]}
             disabled='true'
         />
        
@@ -118,7 +118,6 @@ function ShowAllSchemaModal(props) {
         {props.noCancelBtn ? <></> : (<Button color="secondary" onClick={props.toggle}>
           Cancel
         </Button>)}
-        
       </ModalFooter>
     </Modal>
   </div>
