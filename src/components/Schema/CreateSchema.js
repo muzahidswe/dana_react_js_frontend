@@ -419,7 +419,7 @@ function CreateSchema(props) {
                     toggleTab("0")
                   }}
                 >
-                 SCHEMA Manager
+                 Schema Manager
                 </NavLink>
               </NavItem>
               <NavItem>
@@ -432,7 +432,7 @@ function CreateSchema(props) {
                     toggleTab("1")
                   }}
                 >
-                  Create SCHEMA
+                  Create Schema
                 </NavLink>
               </NavItem>
               <NavItem>
@@ -446,7 +446,7 @@ function CreateSchema(props) {
                     // toggleTab("2")
                   }}
                 >
-                  SCHEMA LIST
+                  Schema List
                 </NavLink>
               </NavItem>
             </ul>
