@@ -925,6 +925,98 @@ function CreateSchema(props) {
                             htmlFor="example-text-input"
                             className="col-md-2 col-form-label"
                             >
+                          Charge
+                            </label>
+                            <div className="col-md-10">
+                                <input
+                                    className="form-control"
+                                    type="number"
+                                    defaultValue={formData.charge ?? 0}
+                                    name = 'charge'
+                                    onChange={(e) => {
+                                        handleChange(e)
+                                    }}
+                                />
+                                {
+                                errors?.charge?.length > 0 && <span style={{color:'red'}}>{errors?.charge}</span> 
+                                }
+                            </div>
+                        </div>
+
+                        <div className="mb-3 row">
+                            <label
+                            htmlFor="example-text-input"
+                            className="col-md-2 col-form-label"
+                            >
+                             Other  Charge
+                            </label>
+                            <div className="col-md-10">
+                                <input
+                                    className="form-control"
+                                    type="number"
+                                    defaultValue={formData.other_charge ?? 0}
+                                    name = 'other_charge'
+                                    onChange={(e) => {
+                                        handleChange(e)
+                                    }}
+                                />
+                                {
+                                errors?.other_charge?.length > 0 && <span style={{color:'red'}}>{errors?.other_charge}</span> 
+                                }
+                            </div>
+                        </div>
+
+                        <div className="mb-3 row">
+                            <label
+                            htmlFor="example-text-input"
+                            className="col-md-2 col-form-label"
+                            >
+                             OverDue Amount
+                            </label>
+                            <div className="col-md-10">
+                                <input
+                                    className="form-control"
+                                    type="number"
+                                    defaultValue={formData.other_charge ?? 0}
+                                    name = 'overdue_amount'
+                                    onChange={(e) => {
+                                        handleChange(e)
+                                    }}
+                                />
+                                {
+                                errors?.other_charge?.length > 0 && <span style={{color:'red'}}>{errors?.other_charge}</span> 
+                                }
+                            </div>
+                        </div>
+
+                        <div className="mb-3 row">
+                            <label
+                            htmlFor="example-text-input"
+                            className="col-md-2 col-form-label"
+                            >
+                             Penal  Charge
+                            </label>
+                            <div className="col-md-10">
+                                <input
+                                    className="form-control"
+                                    type="number"
+                                    defaultValue={formData.other_charge ?? 0}
+                                    name = 'penal_charge'
+                                    onChange={(e) => {
+                                        handleChange(e)
+                                    }}
+                                />
+                                {
+                                errors?.other_charge?.length > 0 && <span style={{color:'red'}}>{errors?.other_charge}</span> 
+                                }
+                            </div>
+                        </div>
+
+                        <div className="mb-3 row">
+                            <label
+                            htmlFor="example-text-input"
+                            className="col-md-2 col-form-label"
+                            >
                             Collection Fee Sharing With Agency
                             </label>
                             <div className="col-md-10">
@@ -982,6 +1074,11 @@ function CreateSchema(props) {
                                                     <th>Daily Penalty</th>
                                                     <th>Processing Cost</th>
                                                     <th>Transaction Fee</th>
+                                                    <th>Charge</th>
+                                                    <th>Other Charge</th>
+                                                    {/* <th>Collection Fee Sharing With Agency</th> */}
+                                                    <th>OverDue Amount</th>
+                                                    <th>Penal Charge</th>
                                                     <th>Collection Fee Sharing With Agency</th>
                                                     <th>Action</th>
                                                     <th>Schema Parameter Action</th>
@@ -1002,9 +1099,11 @@ function CreateSchema(props) {
                                                             <td className={styles.valueText}>{data?.daily_penalty}</td>
                                                             <td className={styles.valueText}>{data?.processing_cost}</td>
                                                             <td className={styles.valueText}>{data?.transaction_fee}</td>
+                                                            <td className={styles.valueText}>{data?.charge ?? 0}</td>
+                                                            <td className={styles.valueText}>{data?.other_charge ?? 0}</td>
+                                                            <td className={styles.valueText}>{data?.overdue_amount ?? 0}</td>
+                                                            <td className={styles.valueText}>{data?.penal_charge ?? 0}</td>
                                                             <td className={styles.valueText}>{data?.collection_fee_sharing_with_agency}</td>
-
-
                                                             <td className={styles.valueText}> 
                                                                 <Link
                                                                     className="btn btn-sm btn-clean btn-icon"

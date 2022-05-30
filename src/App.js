@@ -35,16 +35,16 @@ function App() {
     setUser(user);
   }, []);
 
-  // useEffect(() => {
-  //   if(location.pathname !='/login'){
-  //     if(auth.getCurrentUser()){
-  //       if(!selecteAllMenu.includes(location.pathname)){
-  //         logOut()
-  //         window.location = "/login";
-  //       }
-  //     }
-  //   }
-  // },[location.pathname]) 
+  useEffect(() => {
+    if(location.pathname !='/login'){
+      if(auth.getCurrentUser()){
+        if(!selecteAllMenu.includes(location.pathname)){
+          logOut()
+          window.location = "/login";
+        }
+      }
+    }
+  },[location.pathname]) 
  
   return (
     <div className="App">
