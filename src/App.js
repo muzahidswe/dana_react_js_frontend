@@ -84,7 +84,6 @@ function App() {
                       <ProtectedRoute path="/upload-distributor-supervisor-onboarding-data" component={SupervisorInfoUpload} />
                       <ProtectedRoute path="/create_schema" component={CreateSchema} />
 
-
                       {/* Upload Information End */}
 
                       <Route path="/" exact component={Root} />
